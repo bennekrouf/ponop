@@ -9,5 +9,6 @@
     "bootstrap": "~3.0.0",
     "jquery": "~1.10.1",
     "socket.io-client": "~0.9.16"
+    ,"angular-dragdrop": "~1.0.5"
   }
 }

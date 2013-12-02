@@ -19,13 +19,13 @@ app.configure(function () {
     app.use(express.bodyParser());
 });
 
-app.get('/api/presentation', presentationProvider.findAll);
+/*app.get('/api/presentation', presentationProvider.findAll);
 app.get('/api/presentation/:id', presentationProvider.findById);
 
 app.post('/api/presentation', presentationProvider.addBiography);
 app.put('/api/presentation/:id', presentationProvider.updateBiography);
 
-app.delete('/api/presentation/:id', presentationProvider.deleteBiography);
+app.delete('/api/presentation/:id', presentationProvider.deleteBiography);*/
 
 var port = process.argv[2] || 5000;
 	
