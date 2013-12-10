@@ -26,6 +26,21 @@
     <script src="vendor/angular-route/angular-route.min.js"></script>
     <script src="vendor/angular-resource/angular-resource.min.js"></script>
     <script src="vendor/socket.io-client/dist/socket.io.js"></script>
+    <script src="script/app.js"></script>
+
+    <title>Ponop</title>
+</head>
+
+<body>
+
+    <div class="container" ng-app="Ponop" ng-controller="PonopCtrl">
+
+        <div class="btn btn-primary" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" ng-model="list1" jqyoui-draggable="{animate:true}" ng-hide="!list1.title">{{list1.title}}</div>
+		
+	
+	{{ 2 + 2}}
+			
+    </div>
 
     <script src="vendor/angular-dragdrop/src/angular-dragdrop.js"></script>
     <script src="vendor/jquery-ui/ui/jquery-ui.js"></script>
