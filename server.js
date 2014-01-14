@@ -1,6 +1,8 @@
 var express = require('express')
 	,app = module.exports.app = express()
-	,presentationProvider = require('./routes/presentation')
+	,path = require('path')
+	,fs = require('fs')
+	// ,presentationProvider = require('./routes/presentation')
 	;
 
 app.configure(function () {
@@ -16,22 +18,41 @@ app.configure(function () {
 
 app.configure(function () {
     app.use(express.logger('dev'));     /* 'default', 'short', 'tiny', 'dev' */
-    app.use(express.bodyParser());
+    app.use(express.bodyParser({uploadDir:'.'}));
 });
 
-/*app.get('/api/presentation', presentationProvider.findAll);
-app.get('/api/presentation/:id', presentationProvider.findById);
+/*app.post('/upload', function (req, res) {
+    var tempPath = req.files.file.path
+    	,targetPath = path.resolve('./uploads/');
 
-app.post('/api/presentation', presentationProvider.addBiography);
-app.put('/api/presentation/:id', presentationProvider.updateBiography);
+    fs.rename(tempPath, targetPath, function(err) {
+        if (err) throw err;
+        console.log("Upload completed!");
+    });
+});*/
 
-app.delete('/api/presentation/:id', presentationProvider.deleteBiography);*/
 
-var port = process.argv[2] || 5000;
+app.post('/file-upload', function(req, res) {
+    var tmp_path = req.files.thumbnail.path;
+    // set where the file should actually exists - in this case it is in the "images" directory
+    var target_path = './uploads/' + req.files.thumbnail.name;
+    // move the file from the temporary location to the intended location
+    fs.rename(tmp_path, target_path, function(err) {
+        if (err) throw err;
+        // delete the temporary file, so that the explicitly set temporary upload dir does not get filled with unwanted files
+        fs.unlink(tmp_path, function() {
+            if (err) throw err;
+            res.send('File uploaded to: ' + target_path + ' - ' + req.files.thumbnail.size + ' bytes');
+        });
+    });
+});
+
+var port = process.argv[2] || 5000;	
 	
 app.listen(port, '0.0.0.0', 511, function() {
   console.log("Listening on : "+port);
   
   var open = require('open');
   open('http://localhost:' + port + '/');
+  open('http://127.0.0.1:8080/debug?port=5858');
 });
