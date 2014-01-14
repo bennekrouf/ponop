@@ -1,0 +1,2 @@
+nodemon --debug server.js &
+node-inspector&
