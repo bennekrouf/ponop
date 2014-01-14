@@ -14,11 +14,7 @@ app.configure(function () {
 	app.use("/bower_components", express.static(__dirname + '/bower_components'));
 	app.use("/test", express.static(__dirname + '/test'));
 	app.use(express.errorHandler({dumpExceptions: true, showStack: true, showMessage: true}));
-});
-
-app.configure(function () {
-    app.use(express.logger('dev'));     /* 'default', 'short', 'tiny', 'dev' */
-    app.use(express.bodyParser({uploadDir:'.'}));
+	app.use(express.bodyParser( { keepExtensions: true, uploadDir: __dirname + '/app/uploads' } ));
 });
 
 /*app.post('/upload', function (req, res) {
