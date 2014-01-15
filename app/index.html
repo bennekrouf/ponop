@@ -1,51 +1,178 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="Panoply">
 
 <head>
     <meta name="viewport" content="width=device-width">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
+	<script src="vendor/jquery/jquery-1.10.2.min.js"></script>
+    <script src="vendor/jquery-ui/jquery-ui.min.js"></script>
 
-    <title>Ponop</title>
-</head>
-
-<body ng-app="Ponop" ng-controller="PonopCtrl">
-
-
-    <div ng-view="mainContainer"></div>
-
-
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/jquery/jquery-migrate.min.js"></script>
-
-    <link href="vendor/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
 
     <script src="vendor/angular/angular.min.js"></script>
-    <script src="vendor/angular-route/angular-route.min.js"></script>
-    <script src="vendor/angular-resource/angular-resource.min.js"></script>
-    <script src="vendor/socket.io-client/dist/socket.io.js"></script>
-    <script src="script/app.js"></script>
+    <script src="vendor/angular/angular-route.min.js"></script>
+    
+    <script src="scripts/app.js"></script>
+    <script src="scripts/directives.js"></script>
+    
+    <link href="styles/style.css" rel="stylesheet">
 
-    <title>Ponop</title>
+    <title>Panoply</title>
 </head>
 
-<body>
+<body ng-controller="PanoplyCtrl">
 
-    <div class="container" ng-app="Ponop" ng-controller="PonopCtrl">
+	<nav class="navbar navbar-default" role="navigation">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+		    </button>
+		    <a class="navbar-brand" href="#">Panoply</a>
+		</div>
 
-        <div class="btn btn-primary" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" ng-model="list1" jqyoui-draggable="{animate:true}" ng-hide="!list1.title">{{list1.title}}</div>
-		
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse navbar-ex1-collapse">
+			<ul class="nav navbar-nav">
+				<li ng-click="savePresentation($event)"><a id="saveCreation" href="#">Sauvegarder</a></li>
+		    </ul>
+		</div>
+	</nav>
 	
-	{{ 2 + 2}}
+	
+	
+	<section><!-- list panneaux -->
+		<div id='headerLayer'>
+			<div class="rightCorner">
+				<button class="btn btn-success" type="button" ng-click="addPanel()">Ajouter un panneau</button>
+				<button id="deletePanoButton" class="btn btn-danger" type="button" ng-click="removePanel()" ng-disabled="panels.length <= 3">Supprimer un panneau</button>
+			</div>
+			<div id='listLayer'>
+				<div class='panel' ng-repeat='panel in panels' ng-click="panelSelected($index, $event)" ng-class="{ 'panelSelected': $index == selectedPanelIndex}" ng-style="{backgroundImage: 'url(\''+panels[$index].background.src+'\')'}"></div>
+			</div>
+		</div> 
+	</section><!-- end list panneaux -->
+	
+	
+	
+	<section><!-- layout panneau -->
+	<div class="row" id="container"> 
+	
+		<div class="col-lg-2" id="leftColumn"> <!-- icon -->
 			
-    </div>
-
-    <script src="vendor/angular-dragdrop/src/angular-dragdrop.js"></script>
-    <script src="vendor/jquery-ui/ui/jquery-ui.js"></script>
-
-    <script src="script/app.js"></script>
+				<legend>Ajout d'une icône</legend>
+				<div class="blockCenter" id='iconPlace'></div>
+				
+				
+				<div class="blockCenter">
+					<button class="btn btn-success" type="button" ng-click="addIcon()">Ajouter une icone</button>
+				</div>
+				
+				
+				<br/><br/>
+				<legend>Ajouter l'arrière-plan</legend>
+				
+				<form class="form-horizontal">
+					
+					<div class="form-group">
+						<label class="col-lg-4 control-label" for="linkBackground">Lien :</label>
+						<div class="col-lg-8">
+							<p class="form-control-static" id="linkBackground">Aucun fichier lié</p>
+						</div>
+					</div>
+					
+					<br/>
+					
+					<button ng-if="panels[selectedPanelIndex].background.src" type="button" class="blockCenter btn btn-danger btn-sm" id="deleteLinkBackground" ng-click="removeBackground()" hidden>Supprimer</button>
+					
+					<div class="blockCenter" id="inputBackground">
+						<button ng-if="!panels[selectedPanelIndex].background" class="btn btn-success" type="button" ng-click="addBackground()">Charger un arrière plan</button>
+					</div>
+					
+				</form>
+				
+				<br/><br/>
+				
+			
+		</div> <!-- end icon -->
+		
+		<div class="col-lg-8" id="centerColumn"> <!-- layout -->
+			<div class="blockCenter minHeight">
+				<div id="workspace" ng-repeat="icon in icons" ng-style="{backgroundImage: 'url(\''+panels[selectedPanelIndex].background.src+'\')'}" droppable>
+					
+					
+					
+					
+				</div>
+			</div>
+		</div> <!-- end layout -->
+		
+		<div class="col-lg-2 borderLeft" id="rightColumn">
+			
+			<div ng-if="iconId" class="form-horizontal" id="iconInfos">
+			<legend>Informations sur l'icône</legend>
+				<div class="form-group">
+					<label class="col-lg-4 control-label" for="inputTitleIcon">Titre :</label>
+					<div class="col-lg-8">
+						<input type="text" class="form-control" id="inputTitleIcon" placeholder="Titre" value="{{icons[iconId].title}}" ng-model='icons[iconId].title'>
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-lg-4 control-label" for="inputSizeIcon">Taille (LxH) :</label>
+					<div class="col-lg-8">
+						<div class="row">
+						
+							<div class="col-lg-6" id="iconWidthDiv">
+						    	<input type="text" id="iconWidth" class="form-control" placeholder="Largeur" value="{{icons[iconId].width}}" ng-model='icons[iconId].width'>
+						    </div>
+						    
+						    <div class="col-lg-6" id="iconHeightDiv">
+						   		<input type="text" id="iconHeight" class="form-control" placeholder="Hauteur" value="{{icons[iconId].heigth}}" ng-model='icons[iconId].height'>
+						   	</div>
+						   	
+						</div>
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-lg-4 control-label" for="iconLink">Lien :</label>
+					<div class="col-lg-8">
+						<p class="form-control-static" id="iconLink">Aucun fichier lié</p>						
+					</div>
+				</div>
+				
+				<br/>
+				
+				<button ng-if="iconId[iconId].linkFileName" type="button" class="blockCenter btn btn-danger btn-sm" id="deleteIconLink" onClick="deleteIconLink()">Supprimer le lien</button>
+				
+				<div ng-if="!iconId[iconId].linkFileName" class="blockCenter" id="inputIconLink">
+					<button class="btn btn-success" type="button" ng-click="addIconFile()">Ajouter un fichier</button>
+				</div>
+			
+			<br/><br/>
+			
+			</div>
+				
+			<!-- trash -->
+			<div>
+				<legend>Corbeille</legend>
+				<div id="trash" class="blockCenter" trash>
+					<img src="img/trash.png" width="70%">
+				</div>
+			</div>
+			
+		</div> <!-- end trash -->
+		
+	</div> 
+</section><!-- end layout panneau -->
+			
 
 
 </body>

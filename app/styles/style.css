@@ -1,0 +1,102 @@
+#workspace {
+	width: 1024px;
+	height: 768px;
+	border: 1px solid black;
+	border-radius: 5px;
+	background-size: cover;
+    background-repeat: no-repeat;
+}
+
+
+#iconPlace {
+	width: auto;
+	height: auto;
+	min-height: 0px;
+	max-height: 300px;
+	border-radius: 5px;
+	margin-bottom: 10px;
+	padding: 5px;
+}
+
+#headerLayer {
+	height: 270px;
+	width: 100%;
+	margin-bottom: 30px;
+	border: 1px solid #D4D4D4;
+	background-color: #FAFAFA;
+	padding: 15px;
+}
+
+#listLayer {
+	position: relative;
+	width: 100%;
+	top: 30px;
+	height: 200px;
+	overflow-x: scroll;
+	overflow-y: hidden;
+	white-space: nowrap;
+}
+
+#trash {
+	width: 100%;
+	height: 768px;
+	/*background-image: url(../img/trash.png);*/
+	background-repeat:no-repeat;
+	background-size:200px 200px;
+	background-position:center center; 
+}
+
+
+.rightCorner {
+	position: relative;
+	left: 5px;
+	top: 5px;
+}
+
+.panel {
+	display: inline-block;
+	background-color: white;
+	border-radius:5px;
+	width: 250px;
+	height: 170px;
+	border: 1px solid #D4D4D4;
+	margin-right: 15px;
+	background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.panelSelected {
+	border: 3px solid #45a4f7;
+}
+
+.blockCenter {
+	display: block;
+	text-align:center; 
+	margin:auto;
+}
+
+
+.highlightTrash {
+	background-color:#D4D4D4;
+	opacity : 0.15;
+	text-align: center;
+	color: #000000;
+	content: "Corbeille";
+}
+
+.draggable-object {
+	position: absolute;
+}
+
+
+.borderLeft {
+	border-left: 3px dashed #D4D4D4;
+}
+
+.minHeight {
+	min-height: 768px;
+}
+
+.icon {
+	width:50%;
+}

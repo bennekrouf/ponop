@@ -1,0 +1,140 @@
+panoply.directive('draggable', [function() { 
+	
+	return {
+		restrict: 'A',
+		replace: true,
+		link: function(scope, element, attrs)  {
+			
+			return element.draggable({
+				cursor: 'move',
+				revert: function(valid) {
+					return !valid
+				},
+				start : function (event, ui) 
+				{			
+					scope.iconSelected(ui.helper.attr('id'), event);
+				},
+				snap: "workspace"
+			});
+			
+		}
+	}
+	
+}]);
+
+
+panoply.directive('droppable', [function() { 
+	
+	return {
+		restrict: 'A',
+		replace: true,
+		link: function(scope, element, attrs)  {
+			
+			return element.droppable({
+				accept: '.draggable-object',
+				drop: function(event, ui) 
+			  	{		 			 			 	
+				 	//$('#iconInfos').show();
+				 	
+				 	//$('#iconeProgress .progress-bar').css('width','0%');
+				 	
+				 	if (ui.draggable.parent().attr('id') == 'iconPlace')
+				 	{
+					 	ui.draggable.css('position', 'absolute');
+					 
+					 	//making sure the draggable div doesn't move on its own until we're finished moving it
+					 	ui.draggable.draggable( "option", "revert", 'invalid' );
+					 	
+						//getting current div old absolute position
+						var oldPosition = ui.draggable.offset();
+						
+						//assigning div to new parent
+						var dropTarget = $(this);
+						ui.draggable.appendTo(dropTarget);
+						
+						//getting current div new absolute position
+						var newPosition = ui.draggable.offset();
+						
+						//calculate correct position offset
+						var leftOffset = null;
+						var topOffset = null;
+						
+						if(oldPosition.left > newPosition.left) 
+							leftOffset = (oldPosition.left - newPosition.left);
+						else 
+							leftOffset = -(newPosition.left - oldPosition.left);
+						
+						if(oldPosition.top > newPosition.top) 
+							topOffset = (oldPosition.top - newPosition.top);
+						else 
+							topOffset = -(newPosition.top - oldPosition.top);
+						
+						//instantly offsetting the div to it current position
+						ui.draggable.animate({
+							left: '+=' + leftOffset,
+							top: '+=' + topOffset,
+						}, 0)
+						
+						ui.draggable.width(200);
+						
+						scope.icons[ui.draggable.attr('id')].top = newPosition.top;
+						scope.icons[ui.draggable.attr('id')].left = newPosition.left;
+						
+						//scope.icons[ui.draggable.attr('id')].dropped = true;
+						
+						
+						//ui.draggable.remove();
+				 	}
+				 	else
+				 	{
+					 	var newPosition = ui.draggable.offset();
+					 	scope.icons[ui.draggable.attr('id')].top = newPosition.top;
+					 	scope.icons[ui.draggable.attr('id')].left = newPosition.left;
+				 	}
+				 }
+			});
+			
+		}
+	}
+	
+}]);
+
+
+panoply.directive('trash', [function() {
+	
+	return {
+		restrict: 'A',
+		replace: true,
+		//transclude: false,
+		link : function(scope, element, attrs) {
+			
+			return element.droppable ({
+				accept: '.draggable-object',
+				out: function (event, ui) {
+					$(this).removeClass('highlightTrash');
+				},
+				over: function (event, ui) {
+					$(this).addClass('highlightTrash');
+				},
+				drop: function (event, ui) {
+					
+					/*
+					$.ajax({
+			            type: "POST",
+			            url: repoFiles+"delete_file.php",
+			            dataType: 'json',
+			            data: { 
+			            	file: iconSelected.fileName
+			            }
+			        });*/	 	
+					
+					scope.removeIcon(ui.draggable.attr('id'));
+					ui.draggable.remove();
+					$(this).removeClass('highlightTrash');
+				}
+			});
+			
+		}
+	}
+	
+}]);
