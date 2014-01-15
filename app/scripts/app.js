@@ -40,13 +40,14 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", function($scope, $compi
     $scope.addIcon = function () {
 	     
 	    var bindedImg = generateIcon('img/test.png');
-	    $scope.icons[bindedImg.id] = bindedImg;
-
-	    var img = $compile("<img id='" + bindedImg.id + "' ng-click='iconSelected(\""+bindedImg.id+"\", $event)' ng-src='{{icons[\"" + bindedImg.id + "\"].src}}' ng-style='{width: icons[\"" + bindedImg.id + "\"].width, height: icons[\"" + bindedImg.id + "\"].height }' class='icon draggable-object' draggable/>")($scope);
 	    
+	    $scope.icons[bindedImg.id] = bindedImg;
 	    $scope.iconId = bindedImg.id;
 	    
-	    $('#iconPlace').append(img);
+	    if(!$scope.$$phase && !$scope.$root.$$phase)
+	    	$scope.$apply();
+	    
+	    //$('#iconPlace').append(img);
     }
 
     $scope.iconSelected = function (id, $event) {
@@ -54,7 +55,7 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", function($scope, $compi
     }
     
     $scope.addIconFile = function () {
-	    $scope.icons[$scope.iconId].linkFileName = 'test.pdf';
+	    $scope.icons[$scope.iconId].linkFileName = 'img/angularJS.pdf';
     }
     
     $scope.removeIconFile = function () {
@@ -99,7 +100,7 @@ function generatePanel() {
 	var panel = new Array();
 	
 	panel['id'] = generateUUID();
-	panel['icons'] = new Array();
+	panel['icons'] = [];
 	panel['background'] = undefined;
 	
 	return panel;

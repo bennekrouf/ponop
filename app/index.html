@@ -67,7 +67,9 @@
 		<div class="col-lg-2" id="leftColumn"> <!-- icon -->
 			
 				<legend>Ajout d'une icône</legend>
-				<div class="blockCenter" id='iconPlace'></div>
+				<div class="blockCenter" id='iconPlace'>
+					<img ng-if="!icons[iconId].dropped" ng-model='icons[iconId]' id='{{ icons[iconId].id }}' ng-click="iconSelected(icons[iconId].id, $event)" ng-src='{{icons[iconId].src}}' ng-style='{width:icons[iconId].width, height:icons[iconId].height, top:icons[iconId].top, left:icons[iconId].left  }' class='icon draggable-object' draggable/>"
+				</div>
 				
 				
 				<div class="blockCenter">
@@ -144,15 +146,15 @@
 				<div class="form-group">
 					<label class="col-lg-4 control-label" for="iconLink">Lien :</label>
 					<div class="col-lg-8">
-						<p class="form-control-static" id="iconLink">Aucun fichier lié</p>						
+						<a href='{{ icons[iconId].link }}' ng-model='icons[iconId]'><p class="form-control-static" ng-model='icons[iconId]' id="iconLink">{{ icons[iconId].linkFileName }}</p></a>			
 					</div>
 				</div>
 				
 				<br/>
 				
-				<button ng-if="iconId[iconId].linkFileName" type="button" class="blockCenter btn btn-danger btn-sm" id="deleteIconLink" onClick="deleteIconLink()">Supprimer le lien</button>
+				<button ng-if="icons[iconId].linkFileName" type="button" class="blockCenter btn btn-danger btn-sm" id="deleteIconLink"  ng-click="removeIconFile()">Supprimer le lien</button>
 				
-				<div ng-if="!iconId[iconId].linkFileName" class="blockCenter" id="inputIconLink">
+				<div ng-if="!icons[iconId].linkFileName" class="blockCenter" id="inputIconLink">
 					<button class="btn btn-success" type="button" ng-click="addIconFile()">Ajouter un fichier</button>
 				</div>
 			
