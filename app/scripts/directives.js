@@ -37,6 +37,7 @@ panoply.directive('droppable', [function() {
 				 	//$('#iconInfos').show();
 				 	
 				 	//$('#iconeProgress .progress-bar').css('width','0%');
+				 					 	
 				 	
 				 	if (ui.draggable.parent().attr('id') == 'iconPlace')
 				 	{
@@ -69,27 +70,20 @@ panoply.directive('droppable', [function() {
 						else 
 							topOffset = -(newPosition.top - oldPosition.top);
 						
-						//instantly offsetting the div to it current position
-						ui.draggable.animate({
-							left: '+=' + leftOffset,
-							top: '+=' + topOffset,
-						}, 0)
 						
-						ui.draggable.width(200);
+						scope.icons[ui.draggable.attr('id')].top = ui.draggable.position().top + topOffset;
+						scope.icons[ui.draggable.attr('id')].left = ui.draggable.position().left + leftOffset;
+						scope.icons[ui.draggable.attr('id')].dropped = true;
 						
-						scope.icons[ui.draggable.attr('id')].top = newPosition.top;
-						scope.icons[ui.draggable.attr('id')].left = newPosition.left;
-						
-						//scope.icons[ui.draggable.attr('id')].dropped = true;
-						
-						
-						//ui.draggable.remove();
+						ui.draggable.remove();
+
+						if(!scope.$$phase && !scope.$root.$$phase)
+							scope.$apply();
 				 	}
 				 	else
 				 	{
-					 	var newPosition = ui.draggable.offset();
-					 	scope.icons[ui.draggable.attr('id')].top = newPosition.top;
-					 	scope.icons[ui.draggable.attr('id')].left = newPosition.left;
+					 	scope.icons[ui.draggable.attr('id')].top = ui.draggable.position().top;
+					 	scope.icons[ui.draggable.attr('id')].left = ui.draggable.position().left;					 	
 				 	}
 				 }
 			});

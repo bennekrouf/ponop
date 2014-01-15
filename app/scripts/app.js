@@ -23,7 +23,15 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", function($scope, $compi
     }
     
     $scope.panelSelected = function ($index, $event) {
+    	
+    	$scope.panels[$scope.selectedPanelIndex].icons = $scope.icons;
+    	
 	    $scope.selectedPanelIndex = $index;
+	    $scope.icons = $scope.panels[$scope.selectedPanelIndex].icons;
+	    $scope.iconId = undefined;
+	    
+	    if(!$scope.$$phase && !$scope.$root.$$phase)
+	    	$scope.$apply();
     }
     
     /* ICON */
@@ -106,7 +114,7 @@ function generateIcon(src) {
 	icon.fileName = src.substr(src.lastIndexOf('/') + 1);;
 	icon.src = src;
 	
-	icon.dropped = false;
+	icon.dropped = undefined;
 	
 	//taille originale
 	var t = new Image();

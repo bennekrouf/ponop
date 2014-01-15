@@ -104,9 +104,9 @@
 		
 		<div class="col-lg-8" id="centerColumn"> <!-- layout -->
 			<div class="blockCenter minHeight">
-				<div id="workspace" ng-repeat="icon in icons" ng-style="{backgroundImage: 'url(\''+panels[selectedPanelIndex].background.src+'\')'}" droppable>
+				<div id="workspace" ng-style="{backgroundImage: 'url(\''+panels[selectedPanelIndex].background.src+'\')'}" droppable>
 					
-					
+					<img  ng-repeat="icon in icons"  id='{{icon.id}}' ng-click="iconSelected(icon.id, $event)" ng-src='{{icon.src}}' ng-style='{width:icon.width, height:icon.height, top:icon.top, left:icon.left  }' class='icon draggable-object' ng-if='icon.dropped' draggable/>"
 					
 					
 				</div>
