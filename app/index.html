@@ -59,124 +59,127 @@
 		</div> 
 	</section><!-- end list panneaux -->
 	
-	
+		
 	
 	<section><!-- layout panneau -->
-	<div class="row" id="container"> 
 	
-		<div class="col-lg-2" id="leftColumn"> <!-- icon -->
+		<div class="row" id="container"> 
+		
+			<div class="col-lg-2" id="leftColumn"> <!-- icon -->
+					
+					<div ng-style='{height: icons[iconIdUploaded].height}' ng-model='icons[iconIdUploaded]'> <!-- add icon -->
+						<legend>Ajout d'une icône</legend>
+						<div class="blockCenter" id='iconPlace'>
+							
+							<img ng-if="iconIdUploaded" ng-model='icons[iconIdUploaded]' id='{{ icons[iconIdUploaded].id }}' ng-click="iconSelected(undefined, $event)" ng-src='{{icons[iconIdUploaded].src}}' class='icon draggable-object blockCenter' draggable/>
+							
+						</div>
+						
+						
+						<div class="blockCenter">
+							<button ng-if="!iconIdUploaded" class="btn btn-success" type="button" ng-click="addIcon()">Ajouter une icone</button>
+						</div>
+					</div>
+					
+					<div style="margin-top: 100px;"> <!-- add background -->
+						<legend>Ajouter l'arrière-plan</legend>
+						
+						<form class="form-horizontal">
+							
+							<div class="form-group">
+								<label class="col-lg-4 control-label" for="linkBackground">Lien :</label>
+								<div class="col-lg-8">
+									<p class="form-control-static" id="linkBackground">Aucun fichier lié</p>
+								</div>
+							</div>
+							
+							<br/>
+							
+							<button ng-if="panels[selectedPanelIndex].background.src" type="button" class="blockCenter btn btn-danger btn-sm" id="deleteLinkBackground" ng-click="removeBackground()" hidden>Supprimer</button>
+							
+							<div class="blockCenter" id="inputBackground">
+								<button ng-if="!panels[selectedPanelIndex].background" class="btn btn-success" type="button" ng-click="addBackground()">Charger un arrière plan</button>
+							</div>
+							
+						</form>
+					</div>
+					
+					<br/><br/>
+					
+			</div> <!-- end icon -->
 			
-				<legend>Ajout d'une icône</legend>
-				<div class="blockCenter" id='iconPlace'>
-					<img ng-if="!icons[iconId].dropped" ng-model='icons[iconId]' id='{{ icons[iconId].id }}' ng-click="iconSelected(icons[iconId].id, $event)" ng-src='{{icons[iconId].src}}' ng-style='{width:icons[iconId].width, height:icons[iconId].height, top:icons[iconId].top, left:icons[iconId].left  }' class='icon draggable-object' draggable/>"
+			<div class="col-lg-8" id="centerColumn"> <!-- workspace -->
+				<div class="blockCenter minHeight">
+					<div id="workspace" ng-style="{backgroundImage: 'url(\''+panels[selectedPanelIndex].background.src+'\')'}" droppable>
+						
+						<img  ng-repeat="icon in icons"  id='{{icon.id}}' ng-click="iconSelected(icon.id, $event)" ng-src='{{icon.src}}' ng-style='{width:icon.width, height:icon.height, top:icon.top, left:icon.left  }' class='icon draggable-object' ng-if='icon.dropped' draggable/>
+						
+						
+					</div>
 				</div>
+			</div> <!-- end workspace -->
+			
+			<div class="col-lg-2 borderLeft" id="rightColumn">
 				
-				
-				<div class="blockCenter">
-					<button class="btn btn-success" type="button" ng-click="addIcon()">Ajouter une icone</button>
-				</div>
-				
-				
-				<br/><br/>
-				<legend>Ajouter l'arrière-plan</legend>
-				
-				<form class="form-horizontal">
+				<div ng-if="iconId" class="form-horizontal" id="iconInfos">
+				<legend>Informations sur l'icône</legend>
+					<div class="form-group">
+						<label class="col-lg-4 control-label" for="inputTitleIcon">Titre :</label>
+						<div class="col-lg-8">
+							<input type="text" class="form-control" id="inputTitleIcon" placeholder="Titre" value="{{icons[iconId].title}}" ng-model='icons[iconId].title'>
+						</div>
+					</div>
 					
 					<div class="form-group">
-						<label class="col-lg-4 control-label" for="linkBackground">Lien :</label>
+						<label class="col-lg-4 control-label" for="inputSizeIcon">Taille (LxH) :</label>
 						<div class="col-lg-8">
-							<p class="form-control-static" id="linkBackground">Aucun fichier lié</p>
+							<div class="row">
+							
+								<div class="col-lg-6" id="iconWidthDiv">
+							    	<input type="text" id="iconWidth" class="form-control" placeholder="Largeur" value="{{icons[iconId].width}}" ng-model='icons[iconId].width'>
+							    </div>
+							    
+							    <div class="col-lg-6" id="iconHeightDiv">
+							   		<input type="text" id="iconHeight" class="form-control" placeholder="Hauteur" value="{{icons[iconId].heigth}}" ng-model='icons[iconId].height'>
+							   	</div>
+							   	
+							</div>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-lg-4 control-label" for="iconLink">Lien :</label>
+						<div class="col-lg-8">
+							<a href='{{ icons[iconId].link }}' ng-model='icons[iconId]'><p class="form-control-static" ng-model='icons[iconId]' id="iconLink">{{ icons[iconId].linkFileName }}</p></a>			
 						</div>
 					</div>
 					
 					<br/>
 					
-					<button ng-if="panels[selectedPanelIndex].background.src" type="button" class="blockCenter btn btn-danger btn-sm" id="deleteLinkBackground" ng-click="removeBackground()" hidden>Supprimer</button>
+					<button ng-if="icons[iconId].linkFileName" type="button" class="blockCenter btn btn-danger btn-sm" id="deleteIconLink"  ng-click="removeIconFile()">Supprimer le lien</button>
 					
-					<div class="blockCenter" id="inputBackground">
-						<button ng-if="!panels[selectedPanelIndex].background" class="btn btn-success" type="button" ng-click="addBackground()">Charger un arrière plan</button>
+					<div ng-if="!icons[iconId].linkFileName" class="blockCenter" id="inputIconLink">
+						<button class="btn btn-success" type="button" ng-click="addIconFile()">Ajouter un fichier</button>
 					</div>
+				
+					<br/><br/>
+				
+				</div>
 					
-				</form>
+				<!-- trash -->
+				<div>
+					<legend>Corbeille</legend>
+					<div id="trash" class="blockCenter" trash>
+						<img src="img/trash.png" width="70%">
+					</div>
+				</div><!-- end trash -->
 				
-				<br/><br/>
-				
-			
-		</div> <!-- end icon -->
+			</div> 
 		
-		<div class="col-lg-8" id="centerColumn"> <!-- layout -->
-			<div class="blockCenter minHeight">
-				<div id="workspace" ng-style="{backgroundImage: 'url(\''+panels[selectedPanelIndex].background.src+'\')'}" droppable>
-					
-					<img  ng-repeat="icon in icons"  id='{{icon.id}}' ng-click="iconSelected(icon.id, $event)" ng-src='{{icon.src}}' ng-style='{width:icon.width, height:icon.height, top:icon.top, left:icon.left  }' class='icon draggable-object' ng-if='icon.dropped' draggable/>"
-					
-					
-				</div>
-			</div>
-		</div> <!-- end layout -->
-		
-		<div class="col-lg-2 borderLeft" id="rightColumn">
-			
-			<div ng-if="iconId" class="form-horizontal" id="iconInfos">
-			<legend>Informations sur l'icône</legend>
-				<div class="form-group">
-					<label class="col-lg-4 control-label" for="inputTitleIcon">Titre :</label>
-					<div class="col-lg-8">
-						<input type="text" class="form-control" id="inputTitleIcon" placeholder="Titre" value="{{icons[iconId].title}}" ng-model='icons[iconId].title'>
-					</div>
-				</div>
-				
-				<div class="form-group">
-					<label class="col-lg-4 control-label" for="inputSizeIcon">Taille (LxH) :</label>
-					<div class="col-lg-8">
-						<div class="row">
-						
-							<div class="col-lg-6" id="iconWidthDiv">
-						    	<input type="text" id="iconWidth" class="form-control" placeholder="Largeur" value="{{icons[iconId].width}}" ng-model='icons[iconId].width'>
-						    </div>
-						    
-						    <div class="col-lg-6" id="iconHeightDiv">
-						   		<input type="text" id="iconHeight" class="form-control" placeholder="Hauteur" value="{{icons[iconId].heigth}}" ng-model='icons[iconId].height'>
-						   	</div>
-						   	
-						</div>
-					</div>
-				</div>
-				
-				<div class="form-group">
-					<label class="col-lg-4 control-label" for="iconLink">Lien :</label>
-					<div class="col-lg-8">
-						<a href='{{ icons[iconId].link }}' ng-model='icons[iconId]'><p class="form-control-static" ng-model='icons[iconId]' id="iconLink">{{ icons[iconId].linkFileName }}</p></a>			
-					</div>
-				</div>
-				
-				<br/>
-				
-				<button ng-if="icons[iconId].linkFileName" type="button" class="blockCenter btn btn-danger btn-sm" id="deleteIconLink"  ng-click="removeIconFile()">Supprimer le lien</button>
-				
-				<div ng-if="!icons[iconId].linkFileName" class="blockCenter" id="inputIconLink">
-					<button class="btn btn-success" type="button" ng-click="addIconFile()">Ajouter un fichier</button>
-				</div>
-			
-			<br/><br/>
-			
-			</div>
-				
-			<!-- trash -->
-			<div>
-				<legend>Corbeille</legend>
-				<div id="trash" class="blockCenter" trash>
-					<img src="img/trash.png" width="70%">
-				</div>
-			</div>
-			
-		</div> <!-- end trash -->
-		
-	</div> 
-</section><!-- end layout panneau -->
-			
+		</div> 
+	</section><!-- end layout panneau -->
 
-
+			
 </body>
 
 </html>

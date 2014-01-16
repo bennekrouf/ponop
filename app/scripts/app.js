@@ -1,3 +1,17 @@
+/*
+
+DESCRIPTION DES VARIABLES
+
+panels : liste des panneaux
+selectedPanelIndex : index du panneau sélectioné
+
+iconIdUpload : l'id de l'icone tout juste transmise par l'utilisateur
+iconid : l'id de l'icone sélectionné (ne prends en compte que les icones droppé dans le workspace)
+icons : liste des icones du panneaux
+
+*/
+
+
 var panoply = angular.module('Panoply', [])
 
 
@@ -24,12 +38,16 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", function($scope, $compi
     
     $scope.panelSelected = function ($index, $event) {
     	
+    	//sauvegarde des icones courante dans le panneau
     	$scope.panels[$scope.selectedPanelIndex].icons = $scope.icons;
+    	$scope.panels[$scope.selectedPanelIndex].iconIdUploaded = $scope.iconIdUploaded;
     	
+    	//changement de la vue actuelle pour prendre en compte le panneau sélectionné
 	    $scope.selectedPanelIndex = $index;
 	    $scope.icons = $scope.panels[$scope.selectedPanelIndex].icons;
 	    $scope.iconId = undefined;
-	    
+	    $scope.iconIdUploaded = $scope.panels[$scope.selectedPanelIndex].iconIdUploaded
+	    	    	    
 	    if(!$scope.$$phase && !$scope.$root.$$phase)
 	    	$scope.$apply();
     }
@@ -42,12 +60,13 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", function($scope, $compi
 	    var bindedImg = generateIcon('img/test.png');
 	    
 	    $scope.icons[bindedImg.id] = bindedImg;
-	    $scope.iconId = bindedImg.id;
-	    
+	    $scope.iconIdUploaded = bindedImg.id;
+	    $scope.iconId = undefined;
+	    	    
 	    if(!$scope.$$phase && !$scope.$root.$$phase)
 	    	$scope.$apply();
 	    
-	    //$('#iconPlace').append(img);
+	 //   $('#iconPlace').append(img);
     }
 
     $scope.iconSelected = function (id, $event) {
@@ -99,9 +118,10 @@ function generateUUID() {
 function generatePanel() {
 	var panel = new Array();
 	
-	panel['id'] = generateUUID();
-	panel['icons'] = [];
-	panel['background'] = undefined;
+	panel.id = generateUUID();
+	panel.icons = {};
+	panel.background = undefined;
+	panel.iconIdUploaded = undefined;
 	
 	return panel;
 }
@@ -118,15 +138,23 @@ function generateIcon(src) {
 	icon.dropped = undefined;
 	
 	//taille originale
-	var t = new Image();
+	/*var t = new Image();
     t.src = src;
 	icon.nWidth = t.naturalWidth;
 	icon.nHeight = t.naturalHeight;	
 	
+	
 	if (icon.nWidth > 200)
 		icon.width = 200;
 	else
-		icon.width = icon.nWidth;
+		icon.width = icon.nWidth;*/
+	
+	/*SEULEMENT POUR TEST */
+	icon.width = 200;
+	icon.nWidth = 640;
+	icon.nHeight = 1136;
+	
+	console.log(icon.width);
 
 	icon.height = Math.ceil(icon.nHeight*icon.width/icon.nWidth);
 	

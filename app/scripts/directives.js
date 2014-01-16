@@ -74,6 +74,8 @@ panoply.directive('droppable', [function() {
 						scope.icons[ui.draggable.attr('id')].top = ui.draggable.position().top + topOffset;
 						scope.icons[ui.draggable.attr('id')].left = ui.draggable.position().left + leftOffset;
 						scope.icons[ui.draggable.attr('id')].dropped = true;
+						scope.iconSelected(ui.draggable.attr('id'));
+						scope.iconIdUploaded = undefined;
 						
 						ui.draggable.remove();
 
@@ -120,7 +122,10 @@ panoply.directive('trash', [function() {
 			            data: { 
 			            	file: iconSelected.fileName
 			            }
-			        });*/	 	
+			        });*/
+			        
+			        if (ui.draggable.attr('id') == scope.iconIdUploaded)
+			        	scope.iconIdUploaded = undefined;
 					
 					scope.removeIcon(ui.draggable.attr('id'));
 					ui.draggable.remove();
