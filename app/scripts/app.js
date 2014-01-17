@@ -15,14 +15,13 @@ icons : liste des icones du panneaux
 var panoply = angular.module('Panoply', [])
 
 
+panoply.run(function() {
+  browserWidthChange();
+});
+
+
 panoply.controller('PanoplyCtrl', ["$scope", "$compile", function($scope, $compile){
 
-	$scope.savePresentation = function ($event)
-    {
-        console.log($event);
-        $event.stopPropagation();
-    }
-    
     /* PANELS */
     $scope.panels = [generatePanel(), generatePanel(), generatePanel()];
     
@@ -39,8 +38,7 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", function($scope, $compi
     $scope.panelSelected = function ($index, $event) {
     	
     	//sauvegarde des icones courante dans le panneau
-    	$scope.panels[$scope.selectedPanelIndex].icons = $scope.icons;
-    	$scope.panels[$scope.selectedPanelIndex].iconIdUploaded = $scope.iconIdUploaded;
+    	$scope.saveActualPanel();
     	
     	//changement de la vue actuelle pour prendre en compte le panneau sélectionné
 	    $scope.selectedPanelIndex = $index;
@@ -50,6 +48,11 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", function($scope, $compi
 	    	    	    
 	    if(!$scope.$$phase && !$scope.$root.$$phase)
 	    	$scope.$apply();
+    }
+    
+    $scope.saveActualPanel = function () {
+	    $scope.panels[$scope.selectedPanelIndex].icons = $scope.icons;
+    	$scope.panels[$scope.selectedPanelIndex].iconIdUploaded = $scope.iconIdUploaded;
     }
     
     /* ICON */
@@ -74,10 +77,14 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", function($scope, $compi
     }
     
     $scope.addIconFile = function () {
-	    $scope.icons[$scope.iconId].linkFileName = 'img/angularJS.pdf';
+	    var src = 'img/angularJS.pdf'
+	    
+	    $scope.icons[$scope.iconId].link = src;
+	    $scope.icons[$scope.iconId].linkFileName = src.substr(src.lastIndexOf('/') + 1);
     }
     
     $scope.removeIconFile = function () {
+    	$scope.icons[$scope.iconId].link = undefined;
 	    $scope.icons[$scope.iconId].linkFileName = undefined;
     }
     
@@ -99,8 +106,109 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", function($scope, $compi
     $scope.removeBackground = function () {
 	    $scope.panels[$scope.selectedPanelIndex].background = undefined;
     }
+    
+    
+    /*JSON */
+    $scope.savePresentation = function ($event)
+    {
+	    $scope.saveActualPanel();
+	    
+	    var panels = new Array();
+		
+		for (var i=0; i<$scope.panels.length; i++)
+		{
+			var icons = new Array();
+			
+			for (var tmpIconId in $scope.panels[i].icons)
+			{				
+				var tmpIcon = $scope.panels[i].icons[tmpIconId]
+				
+				var icon = {
+					"id" : tmpIcon.id,
+					"type" : tmpIcon.type,
+					"posX": (tmpIcon.left * 2) + tmpIcon.scaleX*tmpIcon.nWidth,
+					"posY": 1536 - ((tmpIcon.top * 2)+ tmpIcon.scaleY*tmpIcon.nHeight),
+					"scaleX": tmpIcon.scaleX * 2,
+					"scaleY": tmpIcon.scaleY * 2,
+					"imageUp": tmpIcon.fileName,
+					"imageDown": tmpIcon.fileName,
+					"link": tmpIcon.linkFileName
+				}
+				icons.push(icon);
+			}
+			
+			var tmpBackground = $scope.panels[i].background;
+			
+			if (tmpBackground == undefined)
+			{
+				tmpBackground = new Array();
+				tmpBackground.type = '';
+				tmpBackground.fileName = '';
+				tmpBackground.src = '';
+			}
+				
+			
+			var background = {
+				"type": tmpBackground.type,
+				"fileName": tmpBackground.fileName,
+				"videoBackground": tmpBackground.fileName
+			}
+			
+			
+			var pano = {
+				"id" : $scope.panels[i].id,
+				"icons" : icons,
+				"background" : background
+			}
+			
+			panels.push(pano);
+		}
+		
+		var JSONFile = {
+			"appSettings":
+			{
+					"cubeOffsetY":				 0,
+					"defaultShift":				 0,
+					"skewAngle":				 10,
+					"shiftSpeed":				 1.2,
+					"shift-to-nextThreshold":	 300,
+					"shiftBackThreshold":		 20,
+					"shiftBackCoef":			 8,
+					"shiftBackCanBeCancelled":	 0
+			},
+			"panos": panels
+		}
+		
+		
+		console.log(JSON.stringify(JSONFile));
+		
+    }
 
 }]);
+
+
+
+$(window).bind("resize", browserWidthChange);
+
+function browserWidthChange()
+{
+	var winWidth = $(window).width();
+	
+	if (winWidth < 1565)
+	{
+		$("#leftColumn").append($("#rightColumn"));
+		$("#leftColumn").removeClass('col-lg-2').addClass('col-lg-3');
+		$("#centerColumn").removeClass('col-lg-8').addClass('col-lg-9');
+		$("#rightColumn").removeClass('col-lg-2 borderLeft');
+	}
+	else
+	{
+		$("#container").append($("#rightColumn"));
+		$("#leftColumn").removeClass('col-lg-3').addClass('col-lg-2');
+		$("#centerColumn").removeClass('col-lg-9').addClass('col-lg-8');
+		$("#rightColumn").addClass('col-lg-2 borderLeft');
+	}
+}
 
 
 

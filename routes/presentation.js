@@ -3,7 +3,7 @@ var fs = require('fs')
 	,mkdirp = require('mkdirp')
 ;
 
-exports.upload = function(req, res) {
+exports.fileUpload = function(req, res) {
 
 	var tmp_path = req.files.thumbnail.path;
 	    // set where the file should actually exists - in this case it is in the "images" directory

@@ -15,6 +15,14 @@
     <script src="vendor/angular/angular.min.js"></script>
     <script src="vendor/angular/angular-route.min.js"></script>
     
+    <script type="text/javascript" src="vendor/stringify/stringify.js"></script>
+    
+    <link rel="stylesheet" href="vendor/fileupload/css/jquery.fileupload.css">
+	<link rel="stylesheet" href="vendor/fileupload/css/jquery.fileupload-ui.css">
+	<script type="text/javascript" src="vendor/fileupload/js/jquery.iframe-transport.js"></script>
+	<script type="text/javascript" src="vendor/fileupload/js/jquery.fileupload.js"></script>
+
+    
     <script src="scripts/app.js"></script>
     <script src="scripts/directives.js"></script>
     
@@ -89,7 +97,7 @@
 							<div class="form-group">
 								<label class="col-lg-4 control-label" for="linkBackground">Lien :</label>
 								<div class="col-lg-8">
-									<p class="form-control-static" id="linkBackground">Aucun fichier lié</p>
+									<a href='{{ panels[selectedPanelIndex].background.src }}' ng-model='panels[selectedPanelIndex].background'><p class="form-control-static" id="linkBackground">{{ panels[selectedPanelIndex].background.fileName }}</p></a>
 								</div>
 							</div>
 							

@@ -18,7 +18,7 @@ app.configure(function () {
 	app.use(express.errorHandler({dumpExceptions: true, showStack: true, showMessage: true}));
 });
 
-app.post('/file-upload', presentationProvider.upload);
+app.post('/fileUpload', presentationProvider.upload);
 app.post('/createPresentation', presentationProvider.createPresentation);
 
 
