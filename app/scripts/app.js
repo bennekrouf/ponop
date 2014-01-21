@@ -11,8 +11,13 @@ icons : liste des icones du panneaux
 
 */
 
+var panoplyTypes = 	{ 	
+						'kImage': ['jpg', 'jpeg', 'png', 'bmp'],
+						'kVideo': ['mp4'],
+						'kPDF':	['pdf'] 	
+					};
 
-var panoply = angular.module('Panoply', [])
+var panoply = angular.module('Panoply', ['angularFileUpload'])
 
 
 panoply.run(function() {
@@ -20,8 +25,76 @@ panoply.run(function() {
 });
 
 
-panoply.controller('PanoplyCtrl', ["$scope", "$compile", function($scope, $compile){
+panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", function($scope, $compile, $upload){
 
+    $scope.onFileSelect = function($files, sender) {
+    	//$files: an array of files selected, each file has name, size, and type.
+    	var file = $files[0];
+    	
+    	var acceptedType = [];
+    	var typeOfUpload;
+    	
+		var idSender = sender.currentTarget.id;
+		if (idSender === 'iconeUpload')
+		{
+			acceptedType = ['kImage'];
+			typeOfUpload = 'icon';
+		}
+    	else if (idSender === 'backgroundUpload')
+    	{
+    		acceptedType = ['kImage', 'kVideo'];
+    		typeOfUpload = 'background';
+    	}
+    	else if (idSender === 'iconLinkUpload')
+    	{
+    		acceptedType = ['kImage', 'kVideo', 'kPDF'];
+    		typeOfUpload = 'file';
+    	}
+    		
+    	var fileExtension = file.type.substr(file.type.lastIndexOf('/') + 1);		
+		var fileType = ifFileIsAccepted(fileExtension, acceptedType);
+
+		if (!fileType)
+			alert("Ce format de fichier n'est pas autorisé");
+		else
+			$scope.upload(file, typeOfUpload, fileType)
+	};
+	
+	
+	$scope.upload = function (file, typeOfUpload, fileType) {
+		$upload
+			.upload({
+				url: '/upload', //upload.php script, node.js route, or servlet url
+				method: 'POST',
+				// headers: {'headerKey': 'headerValue'}, withCredential: true,
+				file: file,
+				// file: $files, //upload multiple files, this feature only works in HTML5 FromData browsers
+				/* set file formData name for 'Content-Desposition' header. Default: 'file' */
+				//fileFormDataName: myFile,
+				/* customize how data is added to formData. See #40#issuecomment-28612000 for example */
+				//formDataAppender: function(formData, key, val){} 
+			})
+			.progress(function(evt) {
+				//console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
+			})
+			.success(function(data, status, headers, config) {
+				// file is uploaded successfully
+				if (typeOfUpload === 'icon')
+					$scope.addIcon(data.url);
+				else if (typeOfUpload === 'background')
+					$scope.addBackground(data.url, fileType)
+				else if (typeOfUpload === 'file')
+					$scope.addIconFile(data.url, fileType)
+			})
+			.error(function (error) {
+				//console.log(error);
+			});
+			//.then(success, error, progress);
+	}
+    
+    
+    
+    
     /* PANELS */
     $scope.panels = [generatePanel(), generatePanel(), generatePanel()];
     
@@ -36,8 +109,7 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", function($scope, $compi
     }
     
     $scope.panelSelected = function ($index, $event) {
-    	
-    	//sauvegarde des icones courante dans le panneau
+       	//sauvegarde des icones courante dans le panneau
     	$scope.saveActualPanel();
     	
     	//changement de la vue actuelle pour prendre en compte le panneau sélectionné
@@ -58,29 +130,27 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", function($scope, $compi
     /* ICON */
     $scope.icons = {};
     
-    $scope.addIcon = function () {
-	     
-	    var bindedImg = generateIcon('img/test.png');
+    $scope.addIcon = function (src) {
+	    var bindedImg = generateIcon(src);
 	    
 	    $scope.icons[bindedImg.id] = bindedImg;
 	    $scope.iconIdUploaded = bindedImg.id;
 	    $scope.iconId = undefined;
 	    	    
 	    if(!$scope.$$phase && !$scope.$root.$$phase)
-	    	$scope.$apply();
-	    
-	 //   $('#iconPlace').append(img);
+	    	$scope.$apply();	    
     }
 
     $scope.iconSelected = function (id, $event) {
 	    $scope.iconId = id;
+	    
+	    //var idSender = sender.currentTarget.id;
     }
     
-    $scope.addIconFile = function () {
-	    var src = 'img/angularJS.pdf'
-	    
+    $scope.addIconFile = function (src, fileType) {
 	    $scope.icons[$scope.iconId].link = src;
 	    $scope.icons[$scope.iconId].linkFileName = src.substr(src.lastIndexOf('/') + 1);
+	    $scope.icons[$scope.iconId].type = fileType+'File';
     }
     
     $scope.removeIconFile = function () {
@@ -98,8 +168,8 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", function($scope, $compi
     
     
     /* BACKGROUND */
-    $scope.addBackground = function () {
-	    var background = generateBackground('img/wallpaper.jpeg', 'kImageFile');
+    $scope.addBackground = function (src, fileType) {
+	    var background = generateBackground(src, fileType);
 	    $scope.panels[$scope.selectedPanelIndex].background = background;
     }
     
@@ -123,13 +193,16 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", function($scope, $compi
 			{				
 				var tmpIcon = $scope.panels[i].icons[tmpIconId]
 				
+				var scaleX = tmpIcon.width / tmpIcon.nWidth;
+				var scaleY = tmpIcon.height / tmpIcon.nHeight;
+				
 				var icon = {
 					"id" : tmpIcon.id,
 					"type" : tmpIcon.type,
-					"posX": (tmpIcon.left * 2) + tmpIcon.scaleX*tmpIcon.nWidth,
-					"posY": 1536 - ((tmpIcon.top * 2)+ tmpIcon.scaleY*tmpIcon.nHeight),
-					"scaleX": tmpIcon.scaleX * 2,
-					"scaleY": tmpIcon.scaleY * 2,
+					"posX": (tmpIcon.left * 2) + scaleX*tmpIcon.nWidth,
+					"posY": 1536 - ((tmpIcon.top * 2)+ scaleY*tmpIcon.nHeight),
+					"scaleX": scaleX * 2,
+					"scaleY": scaleY * 2,
 					"imageUp": tmpIcon.fileName,
 					"imageDown": tmpIcon.fileName,
 					"link": tmpIcon.linkFileName
@@ -178,7 +251,6 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", function($scope, $compi
 			},
 			"panos": panels
 		}
-		
 		
 		console.log(JSON.stringify(JSONFile));
 		
@@ -261,8 +333,6 @@ function generateIcon(src) {
 	icon.width = 200;
 	icon.nWidth = 640;
 	icon.nHeight = 1136;
-	
-	console.log(icon.width);
 
 	icon.height = Math.ceil(icon.nHeight*icon.width/icon.nWidth);
 	
@@ -274,11 +344,6 @@ function generateIcon(src) {
 	//position
 	icon.top = undefined;
 	icon.left = undefined;
-	
-		
-	//échelle
-	icon.scaleX = icon.width / icon.nWidth;
-	icon.scaleY = icon.height / icon.nHeight;
 	
 	return icon;
 }
@@ -294,6 +359,24 @@ function generateBackground(src, type)
 	return background;
 }
 
+
+function ifFileIsAccepted(fileExtension, acceptedKeysType)
+{
+	for (var i=0; i<acceptedKeysType.length; i++)
+	{			
+		var keyType = acceptedKeysType[i];
+		var arrayExtension = panoplyTypes[keyType];
+		
+		for (var j=0; j<arrayExtension.length; j++)
+		{
+			var extension = arrayExtension[j]
+			if (extension === fileExtension)
+				return keyType;
+		}
+	}
+	
+	return false;
+}
 
 
 /* --------    Méthodes annexes -------- */

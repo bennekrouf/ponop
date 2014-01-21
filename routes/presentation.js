@@ -3,25 +3,43 @@ var fs = require('fs')
 	,mkdirp = require('mkdirp')
 ;
 
-exports.upload = function(req, res) {
+var gm = require('gm');
 
-	var tmp_path = req.files.thumbnail.path;
-	    // set where the file should actually exists - in this case it is in the "images" directory
-	    var target_path = './uploads/' + req.files.thumbnail.name;
-	    // move the file from the temporary location to the intended location
-	    fs.rename(tmp_path, target_path, function(err) {
-	        if (err) {
-	            res.send(400, 'Erreur lors de la copie sur le disque.');
+exports.upload = function(req, res) {	
+	var tmp_path = req.files.file.path;
+	
+	/*
+	gm(tmp_path).size(function (err, size) {
+		if (!err) {
+			console.log('width = ' + size.width);
+			console.log('height = ' + size.height);
+		}
+		else
+		{
+			console.log('error size');
+		}
+	});*/
+	
+	// set where the file should actually exists - in this case it is in the "images" directory
+	var target_path = './app/uploads/' + req.files.file.name;
+	
+	// move the file from the temporary location to the intended location	
+	fs.rename(tmp_path, target_path, function(err) {
+		if (err) {
+			res.send(400, 'Erreur lors de la copie sur le disque.');
+		}
+	    // delete the temporary file, so that the explicitly 
+	    // set temporary upload dir does not get filled with unwanted files
+	    fs.unlink(tmp_path, function() {
+			if (err){
+				res.send(400, 'Erreur lors de la suppression du répertoire temporaire.');
 	        }
-	        // delete the temporary file, so that the explicitly 
-	        // set temporary upload dir does not get filled with unwanted files
-	        fs.unlink(tmp_path, function() {
-	            if (err){
-		            res.send(400, 'Erreur lors de la suppression du répertoire temporaire.');
-	            }
-	            res.send(200, 'File uploaded to: ' + target_path + ' - ' + req.files.thumbnail.size + ' bytes');
-	        });
+	        
+	        var result = { 'fileName': req.files.file.name, 'url':target_path}
+	        
+	        res.send(200, result);  
 	    });
+	});	
 };
 
 var generateId = function(){
@@ -42,6 +60,16 @@ exports.createPresentation = function(req, res){
 	mkdirp('./'+id, function(err) { 
 	    res.send(200, id);
 	});
+
+};
+
+
+exports.getImage = function (req, res) {
+	file = req.params.file;
+	
+	var img = fs.readFileSync(__dirname + "/../app/uploads/" + file);
+	res.writeHead(200, {});
+	res.end(img, 'binary');
 
 };
 
