@@ -1,7 +1,9 @@
 {
   "name": "ponop",
   "version": "0.0.1",
-  "dependencies": {},
+  "dependencies": {
+    "archiver": "~0.5.1"
+  },
   "devDependencies": {
     "express": "3.x",
     "socket.io": "~0.9.0",

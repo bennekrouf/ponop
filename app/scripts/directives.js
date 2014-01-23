@@ -5,6 +5,22 @@ panoply.directive('draggable', [function() {
 		replace: true,
 		link: function(scope, element, attrs)  {
 			
+			element.bind("load" , function(event){ 
+				
+				scope.icons[element[0].id].nWidth = element[0].naturalWidth;
+				scope.icons[element[0].id].nHeight = element[0].naturalHeight;
+				
+				if (element[0].naturalWidth < 200)
+					scope.icons[element[0].id].width = element[0].naturalWidth;
+				
+				scope.icons[element[0].id].height = Math.ceil(element[0].naturalHeight*scope.icons[element[0].id].width/element[0].naturalWidth);
+								
+				if(!scope.$$phase && !scope.$root.$$phase)
+					scope.$apply();
+				       
+            });
+			
+			
 			return element.draggable({
 				cursor: 'move',
 				revert: function(valid) {
@@ -74,7 +90,7 @@ panoply.directive('droppable', [function() {
 						scope.icons[ui.draggable.attr('id')].top = ui.draggable.position().top + topOffset;
 						scope.icons[ui.draggable.attr('id')].left = ui.draggable.position().left + leftOffset;
 						scope.icons[ui.draggable.attr('id')].dropped = true;
-						scope.iconSelected(ui.draggable.attr('id'));
+						scope.iconSelected(ui.draggable.attr('id'), event);
 						scope.iconIdUploaded = undefined;
 						
 						ui.draggable.remove();
@@ -96,12 +112,11 @@ panoply.directive('droppable', [function() {
 }]);
 
 
-panoply.directive('trash', [function() {
+panoply.directive('trash', ['$http', '$cookies', function($http, $cookies) {
 	
 	return {
 		restrict: 'A',
 		replace: true,
-		//transclude: false,
 		link : function(scope, element, attrs) {
 			
 			return element.droppable ({
@@ -114,15 +129,30 @@ panoply.directive('trash', [function() {
 				},
 				drop: function (event, ui) {
 					
-					/*
-					$.ajax({
-			            type: "POST",
-			            url: repoFiles+"delete_file.php",
-			            dataType: 'json',
-			            data: { 
-			            	file: iconSelected.fileName
-			            }
-			        });*/
+			        var id; 
+			        if (ui.draggable.attr('id') == scope.iconIdUploaded)
+			        	id = scope.iconIdUploaded;
+			        else
+			        	id = scope.iconId
+			        
+			        $http({
+				        url: '/remove', 
+						method: "POST",
+						data: {fileName: scope.icons[id].fileName, presentationId: $cookies.presentationId},
+						headers: {'Content-Type': 'application/json'}
+			        })
+			        
+			        if (scope.icons[id].linkFileName != undefined)
+			        {
+				        $http({
+				        	url: '/remove', 
+							method: "POST",
+							data: {fileName: scope.icons[id].linkFileName, presentationId: $cookies.presentationId},
+							headers: {'Content-Type': 'application/json'}
+						})
+			        }
+			        
+			        
 			        
 			        if (ui.draggable.attr('id') == scope.iconIdUploaded)
 			        	scope.iconIdUploaded = undefined;

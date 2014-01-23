@@ -21,8 +21,10 @@ app.configure(function () {
 
 app.post('/upload', presentationProvider.upload);
 app.post('/createPresentation', presentationProvider.createPresentation);
-
-app.get('/app/uploads/:file', presentationProvider.getImage);
+app.get('/app/uploads/:id/:file', presentationProvider.getImage);
+app.post('/json', presentationProvider.json)
+app.post('/remove', presentationProvider.remove)
+app.get('/zip', presentationProvider.zip)
 
 
 var port = process.argv[2] || 5000;	

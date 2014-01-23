@@ -3,25 +3,14 @@ var fs = require('fs')
 	,mkdirp = require('mkdirp')
 ;
 
-var gm = require('gm');
-
 exports.upload = function(req, res) {	
+	
+	var presentationId = req.headers.presentationid;
+	
 	var tmp_path = req.files.file.path;
 	
-	/*
-	gm(tmp_path).size(function (err, size) {
-		if (!err) {
-			console.log('width = ' + size.width);
-			console.log('height = ' + size.height);
-		}
-		else
-		{
-			console.log('error size');
-		}
-	});*/
-	
 	// set where the file should actually exists - in this case it is in the "images" directory
-	var target_path = './app/uploads/' + req.files.file.name;
+	var target_path = './app/uploads/'+ presentationId + '/' + req.files.file.name;
 	
 	// move the file from the temporary location to the intended location	
 	fs.rename(tmp_path, target_path, function(err) {
@@ -43,21 +32,22 @@ exports.upload = function(req, res) {
 };
 
 var generateId = function(){
-	'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-		var r = Math.random()*16|0,v=c=='x'?r:r&0x3|0x8;
-		return v.toString(16);
-	});
+	var d = new Date().getTime();
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = (d + Math.random()*16)%16 | 0;
+        d = Math.floor(d/16);
+        return (c=='x' ? r : (r&0x7|0x8)).toString(16);
+    });
+    return uuid;
 }
 
 exports.createPresentation = function(req, res){
 
 	// Générer un id de présentation
 	var id = generateId();
-
-	console.log(id);
-
+	
 	// Créer un répertoire local avec la présentation
-	mkdirp('./'+id, function(err) { 
+	mkdirp('./app/uploads/'+id, function(err) { 
 	    res.send(200, id);
 	});
 
@@ -65,12 +55,102 @@ exports.createPresentation = function(req, res){
 
 
 exports.getImage = function (req, res) {
+
+	id = req.params.id
 	file = req.params.file;
 	
-	var img = fs.readFileSync(__dirname + "/../app/uploads/" + file);
+	var img = fs.readFileSync(__dirname + "/../app/uploads/"+ id +'/' + file);
 	res.writeHead(200, {});
 	res.end(img, 'binary');
-
 };
+
+
+exports.json = function (req, res) {
+	
+	var presentationId = req.body.presentationId;
+	var json = req.body.json;
+	
+	fs.appendFile('./app/uploads/' + presentationId + '/JSON_Input.json', json, function(err) {
+        if(err) 
+            res.send(500, 'Problème JSON');
+        else 
+            res.send(200, 'JSON created');
+    }); 
+}
+
+var AdmZip = require('adm-zip');
+var archiver = require('archiver');
+var EasyZip = require('easy-zip').EasyZip;
+
+exports.zip = function (req, res) {
+
+	var presentationId = req.headers.cookie.substr(req.headers.cookie.lastIndexOf('=') + 1);
+	var path_files = require('path').normalize(__dirname + '/../app/uploads/'+ presentationId);
+	
+	var zip = new AdmZip();
+	fs.readdir(path_files, function(err,files){
+    	if(err) 
+    		console.log(500, 'Problème dossier');
+    	else
+    	{
+			files.forEach(function(file)
+			{
+        		//console.log('fichier ajoute:'+ file + ' path:' + path_files + '/' +file);
+        		//zip.addLocalFile(path_files + '/' +file);
+        		
+        		//var fileBuffer = fs.readFileSync(path_files + '/' +file);
+        		//zip.addFile(file, fileBuffer, file);
+			});
+			
+			//zip.addLocalFolder(path_files);	
+			//zip.writeZip(path_files + '/archive.zip');
+			/*var willSendthis = zip.toBuffer();
+			fs.writeFile(path_files + '/archive.zip', willSendthis, function (err) {
+				if (err) throw err;
+				res.send(200, 'ok'); 
+			})*/
+		}
+	});
+	
+	zip.addLocalFolder(path_files);	
+	
+	/*var willSendthis = zip.toBuffer();
+	fs.writeFile(path_files + '/archive.zip', willSendthis, function (err) {
+		if (err) throw err;
+		res.send(200, 'ok'); 
+	})*/
+	
+	
+	zip.writeZip(path_files + '/archive.zip');
+	res.download(path_files + '/archive.zip');
+
+	/*
+	res.writeHead(200, {
+      'Content-Description': 'File Transfer',
+      'Content-Transfer-Encoding': 'binary',
+      'Content-Type': 'application/zip',
+      'Expires': '0',
+      'Cache-Control': 'must-revalidate',
+      'Pragma': 'public',
+      'Content-Length': willSendthis.length,
+      'Content-Disposition': 'attachment; filename=archive.zip'
+    });
+    res.write(willSendthis);
+    res.end();*/
+};
+
+
+exports.remove = function (req, res) {
+	var file = req.body.fileName;
+	var presentationId = req.body.presentationId;
+	
+	var tmp_path = './app/uploads/' + presentationId;
+	
+	fs.unlink(tmp_path + '/' + file, function (err) {
+		if (err) console.log('error delete');
+		console.log('successfully deleted icon');
+	});
+}
+
 
 
