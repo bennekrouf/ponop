@@ -1,5 +1,14 @@
 $(window).bind("resize", browserWidthChange);
 
+var initialPanels = [generatePanel(), generatePanel(), generatePanel()];
+var panoplyTypes = 	{ 	
+						'kImage': ['jpg', 'jpeg', 'png', 'bmp'],
+						'kVideo': ['mp4'],
+						'kPDF':	['pdf'],
+						'kLoad': ['zip']	
+					};
+
+
 function browserWidthChange()
 {
 	var winWidth = $(window).width();
@@ -34,7 +43,7 @@ function generateUUID() {
 };
 
 function generatePanel() {
-	var panel = new Array();
+	var panel = {};
 	
 	panel.id = generateUUID();
 	panel.icons = {};
@@ -46,7 +55,7 @@ function generatePanel() {
 
 function generateIcon(src) {
 	
-	var icon = new Array();
+	var icon = {};
 
 	icon.id = generateUUID();	//titre
 	icon.title = "";
@@ -74,7 +83,7 @@ function generateIcon(src) {
 
 function generateBackground(src, type)
 {
-	var background = new Array();
+	var background = {};
 		
 	background.type = type;
 	background.fileName = src.substr(src.lastIndexOf('/') + 1);
@@ -179,7 +188,6 @@ function generateJSON(userPanels) {
 	}
 	
 	return JSONFile;
-	
 }
 
 

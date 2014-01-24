@@ -11,15 +11,8 @@ icons : liste des icones du panneaux
 
 */
 
-var panoplyTypes = 	{ 	
-						'kImage': ['jpg', 'jpeg', 'png', 'bmp'],
-						'kVideo': ['mp4'],
-						'kPDF':	['pdf'] 	
-					};
 
 var panoply = angular.module('Panoply', ['angularFileUpload', 'ngCookies'])
-
-var initialPanels = [generatePanel(), generatePanel(), generatePanel()];
 
 panoply.run(['$rootScope', '$http', '$cookies',  function ($rootScope, $http, $cookies) {
   	
@@ -36,17 +29,39 @@ panoply.run(['$rootScope', '$http', '$cookies',  function ($rootScope, $http, $c
 			.then(function(response) {
         		$cookies.presentationId = response.data;
         		$cookies.panels = JSON.stringify({panels :initialPanels});
-			}, 
-		function(error) {});
+			}, function(error) {});
   	}
-  	
-  	
-  
 }]);
 
 
-panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', '$http', '$window', function($scope, $compile, $upload, $cookies, $http, $window){
+panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', '$http', '$window', function($scope, $compile, $upload, $cookies, $http, $window) {
 
+    //trigger lorsque l'utilisateur s'apprete à quitter la page
+    $scope.$on('$locationChangeStart', function( event ) {
+    	$scope.saveActualPanel();
+	});
+    
+    $scope.reinitialize = function() {
+	    var answer = confirm("Attention, toutes les modifications apportés à la présentation seront supprimées")
+	    if (answer)
+	    {
+		    $scope.panels = [generatePanel(), generatePanel(), generatePanel()];
+		    $cookies.panels = JSON.stringify({panels :$scope.panels});
+		    
+		    $scope.selectedPanelIndex = 0;
+			$scope.icons = $scope.panels[$scope.selectedPanelIndex].icons;
+			$scope.iconId = undefined;
+			$scope.iconIdUploaded = $scope.panels[$scope.selectedPanelIndex].iconIdUploaded
+			
+			$http({url: '/reinitialization', method: "POST"});
+			
+			if(!$scope.$$phase && !$scope.$root.$$phase)
+	    		$scope.$apply();   
+	    }
+    }
+    
+    
+    /* FILE UPLOAD */
     $scope.onFileSelect = function($files, sender) {
     	//$files: an array of files selected, each file has name, size, and type.
     	var file = $files[0];
@@ -84,7 +99,7 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 	$scope.upload = function (file, typeOfUpload, fileType) {
 		$upload
 			.upload({
-				url: '/upload', //upload.php script, node.js route, or servlet url
+				url: '/upload',
 				method: 'POST',
 				headers: {'presentationid': $cookies.presentationId}, withCredential: true,
 				file: file,
@@ -131,10 +146,16 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
     
     $scope.addPanel = function () {
 	    $scope.panels.push(generatePanel());
+	    $scope.panelSelected($scope.panels.length - 1, undefined)
     }
     
     $scope.removePanel = function() {
 	    $scope.panels.remove($scope.selectedPanelIndex);
+	    
+	    $scope.selectedPanelIndex = 0;
+		$scope.icons = $scope.panels[$scope.selectedPanelIndex].icons;
+		$scope.iconId = undefined;
+		$scope.iconIdUploaded = $scope.panels[$scope.selectedPanelIndex].iconIdUploaded
     }
     
     $scope.panelSelected = function ($index, $event) {
@@ -159,7 +180,6 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 	    	$scope.$apply();
     	
     	$cookies.panels = JSON.stringify({panels :$scope.panels});
-    	console.log($cookies.panels);
     }
     
     /* ICON */
@@ -222,8 +242,7 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 				data: {fileName: $scope.panels[$scope.selectedPanelIndex].background.fileName, presentationId: $cookies.presentationId},
 				headers: {'Content-Type': 'application/json'}
 			})
-    
-    
+
 	    $scope.panels[$scope.selectedPanelIndex].background = undefined;
     }
     
@@ -234,9 +253,7 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 	    $scope.saveActualPanel();
 	    
 	    var JSONFile = generateJSON($scope.panels);
-		
-		console.log(JSON.stringify(JSONFile));
-		
+				
 		$http({
 				url: '/json', 
 				method: "POST", 
@@ -250,23 +267,4 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
         	console.log(data);
         });	
     }
-    
-    /*
-    $scope.requestZip = function () {
-	    
-	    $http({
-				url: '/zip', 
-				method: "GET"
-			})
-			.success(function (data, status, headers, config) {
-				console.log(data);
-				console.log(headers);
-			})
-			.error(function (data, status, headers, config) {
-				console.log(data);
-				console.log(headers);
-			});
-	    
-    }*/
-
 }]);

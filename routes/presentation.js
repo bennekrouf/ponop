@@ -87,56 +87,10 @@ exports.zip = function (req, res) {
 	var presentationId = req.headers.cookie.substr(req.headers.cookie.lastIndexOf('=') + 1);
 	var path_files = require('path').normalize(__dirname + '/../app/uploads/'+ presentationId);
 	
-	var zip = new AdmZip();
-	fs.readdir(path_files, function(err,files){
-    	if(err) 
-    		console.log(500, 'Problème dossier');
-    	else
-    	{
-			files.forEach(function(file)
-			{
-        		//console.log('fichier ajoute:'+ file + ' path:' + path_files + '/' +file);
-        		//zip.addLocalFile(path_files + '/' +file);
-        		
-        		//var fileBuffer = fs.readFileSync(path_files + '/' +file);
-        		//zip.addFile(file, fileBuffer, file);
-			});
-			
-			//zip.addLocalFolder(path_files);	
-			//zip.writeZip(path_files + '/archive.zip');
-			/*var willSendthis = zip.toBuffer();
-			fs.writeFile(path_files + '/archive.zip', willSendthis, function (err) {
-				if (err) throw err;
-				res.send(200, 'ok'); 
-			})*/
-		}
-	});
-	
+	var zip = new AdmZip();	
 	zip.addLocalFolder(path_files);	
-	
-	/*var willSendthis = zip.toBuffer();
-	fs.writeFile(path_files + '/archive.zip', willSendthis, function (err) {
-		if (err) throw err;
-		res.send(200, 'ok'); 
-	})*/
-	
-	
 	zip.writeZip(path_files + '/archive.zip');
 	res.download(path_files + '/archive.zip');
-
-	/*
-	res.writeHead(200, {
-      'Content-Description': 'File Transfer',
-      'Content-Transfer-Encoding': 'binary',
-      'Content-Type': 'application/zip',
-      'Expires': '0',
-      'Cache-Control': 'must-revalidate',
-      'Pragma': 'public',
-      'Content-Length': willSendthis.length,
-      'Content-Disposition': 'attachment; filename=archive.zip'
-    });
-    res.write(willSendthis);
-    res.end();*/
 };
 
 
@@ -150,6 +104,28 @@ exports.remove = function (req, res) {
 		if (err) console.log('error delete');
 		console.log('successfully deleted icon');
 	});
+}
+
+exports.reinitialization = function (req, res) {
+	
+	var presentationId = req.headers.cookie.substr(req.headers.cookie.lastIndexOf('=') + 1);
+	var path_files = require('path').normalize(__dirname + '/../app/uploads/'+ presentationId);
+	
+	if( fs.existsSync(path_files) ) 
+	{
+		files = fs.readdirSync(path_files);
+        files.forEach(function(file,index){
+            var curPath = path_files + "/" + file;
+            if(fs.statSync(curPath).isDirectory()) { // recurse
+                deleteFolderRecursive(curPath);
+            } else { // delete file
+                fs.unlinkSync(curPath);
+            }
+        });
+
+	}
+	
+	res.send(200, 'Folder was reinit');
 }
 
 

@@ -25,6 +25,7 @@ app.get('/app/uploads/:id/:file', presentationProvider.getImage);
 app.post('/json', presentationProvider.json)
 app.post('/remove', presentationProvider.remove)
 app.get('/zip', presentationProvider.zip)
+app.post('/reinitialization', presentationProvider.reinitialization)
 
 
 var port = process.argv[2] || 5000;	
