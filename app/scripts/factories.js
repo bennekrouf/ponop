@@ -1,4 +1,4 @@
-panoply.factory('PanelsFactory', ['$cookies', function($cookies) {
+panoply.factory('PanelsFactory', ['$cookies', 'IconsFactory', 'BackgroundFactory', function($cookies, IconsFactory, BackgroundFactory) {
     
     //var panels = undefined;
     
@@ -29,6 +29,63 @@ panoply.factory('PanelsFactory', ['$cookies', function($cookies) {
         
         savedPanelsInCookie: function(panelsToSaved) {
 	        $cookies.panels = JSON.stringify({panels :panelsToSaved});
+        },
+        
+        
+        loadPanelsFromData: function (data) {
+	        	        
+	        var target_path = './app/uploads/'+ $cookies.presentationId + '/' ;
+	        var iOSPanels = data.json.panos;
+	        var jsPanels = new Array();
+	        
+	        var imgDimensions = data.imgDimension;
+	        
+	        for (var i=0; i<iOSPanels.length; i++)
+	        {
+		        var panel = this.generatePanel();
+		        
+		        var iOSBackground = iOSPanels[i].background;
+		        var background = BackgroundFactory.generateBackground(target_path + iOSBackground.fileName, iOSBackground.type);
+		        
+		        var iOSIcons = iOSPanels[i].icons;
+		        var icons = {};
+		        for (var j=0; j<iOSIcons.length; j++)
+		        {
+			        var iOSIcon = iOSIcons[j];
+			        var icon = IconsFactory.generateIcon(target_path + iOSIcon.imageUp)
+					
+			        icon.dropped = true;
+			        icon.title = iOSIcon.title;
+			        icon.type = iOSIcon.type;
+			        icon.link = target_path + iOSIcon.link;
+			        icon.linkFileName = iOSIcon.link;
+			        
+			        icon.nWidth = imgDimensions[iOSIcon.imageUp].width;
+			        icon.nHeight = imgDimensions[iOSIcon.imageUp].height;
+			        
+			        icon.width = iOSIcon.scaleX * icon.nWidth / 2;
+			        icon.height = iOSIcon.scaleY * icon.nHeight / 2;
+			        
+			        icon.left = iOSIcon.posX/2 - icon.width/4;
+			        icon.top = (1536-iOSIcon.posY)/2 - icon.height/4;
+			        
+			        
+			        
+ 			        icons[icon.id] = icon;
+ 			        if (iOSIcon.imageUp === 'cache.png')
+ 			        {
+ 					 	console.log(icon.height);
+ 					 	console.log(icons[icon.id]);
+ 					 	console.log(icons[icon.id].height);
+ 					}
+		        }
+		        
+		        panel.icons = icons;
+		        panel.background = background;
+		        jsPanels.push(panel);
+	        }
+									
+	        return jsPanels;
         }
     };
 }]);
@@ -51,8 +108,7 @@ panoply.factory('IconsFactory', function() {
 			
 			icon.width = 200;
 			icon.nWidth = undefined;
-			icon.nHeight = undefined;
-		
+			icon.nHeight = undefined;		
 			
 			//lien
 			icon.type = "kImageFile";

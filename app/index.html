@@ -66,7 +66,14 @@
 			<div class="rightCorner">
 				<button class="btn btn-success" type="button" ng-click="addPanel()">Ajouter un panneau</button>
 				<button id="deletePanoButton" class="btn btn-danger" type="button" ng-click="removePanel()" ng-disabled="panels.length <= 3">Supprimer un panneau</button>
+				
+				<span style="float: right;" class="btn btn-primary fileinput-button">
+					<i class="icon-plus icon-white"></i>
+					<span>Charger une présentation</span>
+					<input id="presentationUpload" type="file" ng-file-select="onFileSelect($files, $event)">
+				</span>
 			</div>
+			
 			<div id='listLayer'>
 				<div class='panel' ng-repeat='panel in panels' ng-click="panelSelected($index, $event)" ng-class="{ 'panelSelected': $index == selectedPanelIndex}" ng-style="{backgroundImage: 'url(\''+panels[$index].background.src+'\')'}"></div>
 			</div>

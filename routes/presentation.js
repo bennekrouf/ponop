@@ -3,31 +3,67 @@ var fs = require('fs')
 	,mkdirp = require('mkdirp')
 ;
 
+var AdmZip = require('adm-zip');
+var sizeOf = require('image-size');
+
 exports.upload = function(req, res) {	
 	
 	var presentationId = req.body.presentationId;	
 	var tmp_path = req.files.file.path;
 	
-	// set where the file should actually exists - in this case it is in the "images" directory
-	var target_path = './app/uploads/'+ presentationId + '/' + req.files.file.name;
+	var extentionFile = req.files.file.name.split('.').pop();
 	
-	// move the file from the temporary location to the intended location	
-	fs.rename(tmp_path, target_path, function(err) {
-		if (err) {
-			res.send(400, 'Erreur lors de la copie sur le disque.');
-		}
-	    // delete the temporary file, so that the explicitly 
-	    // set temporary upload dir does not get filled with unwanted files
-	    fs.unlink(tmp_path, function() {
-			if (err){
-				res.send(400, 'Erreur lors de la suppression du répertoire temporaire.');
-	        }
-	        
-	        var result = { 'fileName': req.files.file.name, 'url':target_path}
-	        
-	        res.send(200, result);  
-	    });
-	});	
+	if (extentionFile === 'zip')
+	{
+		 var target_path = './app/uploads/'+ presentationId;
+		 
+		 var zip = new AdmZip(tmp_path);
+		 var zipEntries = zip.getEntries();
+		 
+		 var json = undefined;
+		 var imgDimension = {};
+		 
+		 zipEntries.forEach(function(zipEntry) {
+			 if (!zipEntry.isDirectory) 
+			 {
+			 	zip.extractEntryTo(zipEntry.entryName, target_path, /*maintainEntryPath*/false, /*overwrite*/true);
+			 	
+			 	if (zipEntry.name === 'JSON_Input.json')
+			 		json = fs.readFileSync(target_path +'/' + zipEntry.name);
+			 	
+			 	var extension = zipEntry.name.split('.').pop().toLowerCase();
+			 	if (extension === 'jpg' || extension === 'png' || extension === 'bmp' || extension === 'jpeg')
+				 	imgDimension[zipEntry.name] = sizeOf(target_path +'/' + zipEntry.name);
+			 }
+		});
+		 		 
+		 var result = { 'json': JSON.parse(json), 'imgDimension':imgDimension}
+		 
+		 res.send(200, result);
+	}
+	else
+	{
+		// set where the file should actually exists - in this case it is in the "images" directory
+		var target_path = './app/uploads/'+ presentationId + '/' + req.files.file.name;
+	
+		// move the file from the temporary location to the intended location	
+		fs.rename(tmp_path, target_path, function(err) {
+			if (err) {
+				res.send(400, 'Erreur lors de la copie sur le disque.');
+			}
+		    // delete the temporary file, so that the explicitly 
+		    // set temporary upload dir does not get filled with unwanted files
+		    fs.unlink(tmp_path, function() {
+				if (err){
+					res.send(400, 'Erreur lors de la suppression du répertoire temporaire.');
+		        }
+		        
+		        var result = { 'fileName': req.files.file.name, 'url':target_path}
+		        
+		        res.send(200, result);  
+		    });
+		});	
+	}
 };
 
 var generateId = function(){
@@ -77,10 +113,6 @@ exports.json = function (req, res) {
     }); 
 }
 
-var AdmZip = require('adm-zip');
-var archiver = require('archiver');
-var EasyZip = require('easy-zip').EasyZip;
-
 exports.zip = function (req, res) {
 
 	var presentationId = req.headers.cookie.substr(req.headers.cookie.lastIndexOf('=') + 1);
@@ -101,7 +133,7 @@ exports.remove = function (req, res) {
 	
 	fs.unlink(tmp_path + '/' + file, function (err) {
 		if (err) console.log('error delete');
-		console.log('successfully deleted icon');
+		res.send(200, 'file deleted');
 	});
 }
 

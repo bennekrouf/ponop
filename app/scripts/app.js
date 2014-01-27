@@ -79,6 +79,11 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
     		acceptedType = ['kImage', 'kVideo', 'kPDF'];
     		typeOfUpload = 'file';
     	}
+    	else if (idSender === 'presentationUpload')
+    	{
+	    	acceptedType = ['kLoad'];
+	    	typeOfUpload = 'zip';
+    	}
     		
     	var fileExtension = file.type.substr(file.type.lastIndexOf('/') + 1);		
 		var fileType = ifFileIsAccepted(fileExtension, acceptedType);
@@ -113,6 +118,18 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 					$scope.addBackground(data.url, fileType);
 				else if (typeOfUpload === 'file')
 					$scope.addIconFile(data.url, fileType)
+				else if (typeOfUpload === 'zip')
+				{
+					$scope.panels = PanelsFactory.loadPanelsFromData(data);
+					
+					$scope.selectedPanelIndex = 0;
+					$scope.icons = $scope.panels[$scope.selectedPanelIndex].icons;
+					$scope.iconId = undefined;
+					$scope.iconIdUploaded = $scope.panels[$scope.selectedPanelIndex].iconIdUploaded
+	    	    	  
+					if(!$scope.$$phase && !$scope.$root.$$phase)
+						$scope.$apply();
+				}
 				
 				if(!$scope.$$phase && !$scope.$root.$$phase)
 					$scope.$apply();

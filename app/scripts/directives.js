@@ -13,8 +13,11 @@ panoply.directive('draggable', [function() {
 				if (element[0].naturalWidth < 200)
 					scope.icons[element[0].id].width = element[0].naturalWidth;
 				
-				scope.icons[element[0].id].height = Math.ceil(element[0].naturalHeight*scope.icons[element[0].id].width/element[0].naturalWidth);
-								
+				if (scope.icons[element[0].id].height == undefined)
+					scope.icons[element[0].id].height = Math.ceil(element[0].naturalHeight*scope.icons[element[0].id].width/element[0].naturalWidth);
+				
+				console.log('je passe');
+				
 				if(!scope.$$phase && !scope.$root.$$phase)
 					scope.$apply();
 				       
@@ -50,11 +53,6 @@ panoply.directive('droppable', [function() {
 				accept: '.draggable-object',
 				drop: function(event, ui) 
 			  	{		 			 			 	
-				 	//$('#iconInfos').show();
-				 	
-				 	//$('#iconeProgress .progress-bar').css('width','0%');
-				 					 	
-				 	
 				 	if (ui.draggable.parent().attr('id') == 'iconPlace')
 				 	{
 					 	ui.draggable.css('position', 'absolute');
@@ -94,9 +92,11 @@ panoply.directive('droppable', [function() {
 						scope.iconIdUploaded = undefined;
 						
 						ui.draggable.remove();
-
+												
 						if(!scope.$$phase && !scope.$root.$$phase)
 							scope.$apply();
+							
+						scope.saveActualPanel();
 				 	}
 				 	else
 				 	{
