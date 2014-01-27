@@ -1,6 +1,5 @@
 $(window).bind("resize", browserWidthChange);
 
-var initialPanels = [generatePanel(), generatePanel(), generatePanel()];
 var panoplyTypes = 	{ 	
 						'kImage': ['jpg', 'jpeg', 'png', 'bmp'],
 						'kVideo': ['mp4'],
@@ -41,56 +40,6 @@ function generateUUID() {
     });
     return uuid;
 };
-
-function generatePanel() {
-	var panel = {};
-	
-	panel.id = generateUUID();
-	panel.icons = {};
-	panel.background = undefined;
-	panel.iconIdUploaded = undefined;
-	
-	return panel;
-}
-
-function generateIcon(src) {
-	
-	var icon = {};
-
-	icon.id = generateUUID();	//titre
-	icon.title = "";
-	icon.fileName = src.substr(src.lastIndexOf('/') + 1);;
-	icon.src = src;
-	
-	icon.dropped = undefined;
-	
-	icon.width = 200;
-	icon.nWidth = undefined;
-	icon.nHeight = undefined;
-
-	
-	//lien
-	icon.type = "kImageFile";
-	icon.link = undefined;
-	icon.linkFileName = undefined;
-	
-	//position
-	icon.top = undefined;
-	icon.left = undefined;
-	
-	return icon;
-}
-
-function generateBackground(src, type)
-{
-	var background = {};
-		
-	background.type = type;
-	background.fileName = src.substr(src.lastIndexOf('/') + 1);
-	background.src = src;
-	
-	return background;
-}
 
 
 function ifFileIsAccepted(fileExtension, acceptedKeysType)

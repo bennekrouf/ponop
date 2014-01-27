@@ -5,8 +5,7 @@ var fs = require('fs')
 
 exports.upload = function(req, res) {	
 	
-	var presentationId = req.headers.presentationid;
-	
+	var presentationId = req.body.presentationId;	
 	var tmp_path = req.files.file.path;
 	
 	// set where the file should actually exists - in this case it is in the "images" directory
@@ -108,7 +107,9 @@ exports.remove = function (req, res) {
 
 exports.reinitialization = function (req, res) {
 	
-	var presentationId = req.headers.cookie.substr(req.headers.cookie.lastIndexOf('=') + 1);
+	var presentationId = req.body.presentationId;	
+	
+	console.log(req.body);
 	var path_files = require('path').normalize(__dirname + '/../app/uploads/'+ presentationId);
 	
 	if( fs.existsSync(path_files) ) 
@@ -122,10 +123,11 @@ exports.reinitialization = function (req, res) {
                 fs.unlinkSync(curPath);
             }
         });
-
+		
+		res.send(200, 'Folder was reinit');
 	}
-	
-	res.send(200, 'Folder was reinit');
+	else
+		res.send(500, 'Folder not found');
 }
 
 

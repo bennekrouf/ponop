@@ -29,6 +29,7 @@
     <script src="scripts/extras.js"></script>
     <script src="scripts/app.js"></script>
     <script src="scripts/directives.js"></script>
+    <script src="scripts/factories.js"></script>
     
     <link href="styles/style.css" rel="stylesheet">
 
@@ -36,7 +37,7 @@
 </head>
 
 <body ng-controller="PanoplyCtrl">
-
+<div class="container">
 	<nav class="navbar navbar-default" role="navigation">
 		<!-- Brand and toggle get grouped for better mobile display -->
 		<div class="navbar-header">
@@ -148,7 +149,7 @@
 			</div> <!-- end icon -->
 			
 			<div class="col-lg-8" id="centerColumn"> <!-- workspace -->
-				<div class="blockCenter minHeight">
+				<div class="minHeight">
 					<div id="workspace" ng-style="{backgroundImage: 'url(\''+panels[selectedPanelIndex].background.src+'\')'}" droppable>
 						
 						<img  ng-repeat="icon in icons"  id='{{icon.id}}' ng-click="iconSelected(icon.id, $event)" ng-src='{{icon.src}}' ng-style='{width:icon.width, height:icon.height, top:icon.top, left:icon.left  }' class='icon draggable-object' ng-if='icon.dropped' draggable/>
@@ -233,7 +234,7 @@
 		</div> 
 	</section><!-- end layout panneau -->
 
-			
+</div>		
 </body>
 
 </html>

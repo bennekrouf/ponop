@@ -18,23 +18,17 @@ panoply.run(['$rootScope', '$http', '$cookies',  function ($rootScope, $http, $c
   	
   	browserWidthChange();
   	
-  	if ($cookies.panels != undefined)
-  	{
-	  	var savedPanels = $.parseJSON($cookies.panels);
-	  	initialPanels = savedPanels.panels;
-  	}
-  	else
+  	if ($cookies.presentationId == undefined)
   	{
 	  	$http({url: '/createPresentation',method: "POST"})
 			.then(function(response) {
         		$cookies.presentationId = response.data;
-        		$cookies.panels = JSON.stringify({panels :initialPanels});
 			}, function(error) {});
   	}
 }]);
 
 
-panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', '$http', '$window', function($scope, $compile, $upload, $cookies, $http, $window) {
+panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', '$http', '$window', 'PanelsFactory', 'IconsFactory', 'BackgroundFactory', function($scope, $compile, $upload, $cookies, $http, $window, PanelsFactory, IconsFactory, BackgroundFactory) {
 
     //trigger lorsque l'utilisateur s'apprete à quitter la page
     $scope.$on('$locationChangeStart', function( event ) {
@@ -45,15 +39,15 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 	    var answer = confirm("Attention, toutes les modifications apportés à la présentation seront supprimées")
 	    if (answer)
 	    {
-		    $scope.panels = [generatePanel(), generatePanel(), generatePanel()];
-		    $cookies.panels = JSON.stringify({panels :$scope.panels});
+		    $cookies.panels = undefined;
+		    $scope.panels = PanelsFactory.panelsInit();
 		    
 		    $scope.selectedPanelIndex = 0;
 			$scope.icons = $scope.panels[$scope.selectedPanelIndex].icons;
 			$scope.iconId = undefined;
 			$scope.iconIdUploaded = $scope.panels[$scope.selectedPanelIndex].iconIdUploaded
 			
-			$http({url: '/reinitialization', method: "POST"});
+			$http({url: '/reinitialization', method: "POST", data: {'presentationId': $cookies.presentationId}, headers: {'Content-Type': 'application/json'}});
 			
 			if(!$scope.$$phase && !$scope.$root.$$phase)
 	    		$scope.$apply();   
@@ -101,7 +95,7 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 			.upload({
 				url: '/upload',
 				method: 'POST',
-				headers: {'presentationid': $cookies.presentationId}, withCredential: true,
+				data: {'presentationId': $cookies.presentationId},
 				file: file,
 			})
 			.progress(function(evt) {
@@ -140,12 +134,11 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
     
     
     /* PANELS */
-    $scope.panels = initialPanels;
-    
+    $scope.panels = PanelsFactory.panelsInit();
     $scope.selectedPanelIndex = 0;
     
     $scope.addPanel = function () {
-	    $scope.panels.push(generatePanel());
+	    $scope.panels.push(PanelsFactory.generatePanel());
 	    $scope.panelSelected($scope.panels.length - 1, undefined)
     }
     
@@ -156,6 +149,9 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 		$scope.icons = $scope.panels[$scope.selectedPanelIndex].icons;
 		$scope.iconId = undefined;
 		$scope.iconIdUploaded = $scope.panels[$scope.selectedPanelIndex].iconIdUploaded
+		
+		if(!$scope.$$phase && !$scope.$root.$$phase)
+	    	$scope.$apply();
     }
     
     $scope.panelSelected = function ($index, $event) {
@@ -176,22 +172,21 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 	    $scope.panels[$scope.selectedPanelIndex].icons = $scope.icons;
     	$scope.panels[$scope.selectedPanelIndex].iconIdUploaded = $scope.iconIdUploaded;
     	
-    	if(!$scope.$$phase && !$scope.$root.$$phase)
-	    	$scope.$apply();
-    	
-    	$cookies.panels = JSON.stringify({panels :$scope.panels});
+    	PanelsFactory.savedPanelsInCookie($scope.panels);
     }
     
     /* ICON */
-    $scope.icons = {};
+    $scope.icons = $scope.panels[$scope.selectedPanelIndex].icons;
     
     $scope.addIcon = function (src) {
-	    var bindedImg = generateIcon(src);
+	    var icon = IconsFactory.generateIcon(src);
 	    
-	    $scope.icons[bindedImg.id] = bindedImg;
-	    $scope.iconIdUploaded = bindedImg.id;
+	    $scope.icons[icon.id] = icon;
+	    $scope.iconIdUploaded = icon.id;
 	    $scope.iconId = undefined;
-			        
+		
+		$scope.saveActualPanel();
+		
 		if(!$scope.$$phase && !$scope.$root.$$phase)
 		    $scope.$apply();
     }
@@ -204,6 +199,8 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 	    $scope.icons[$scope.iconId].link = src;
 	    $scope.icons[$scope.iconId].linkFileName = src.substr(src.lastIndexOf('/') + 1);
 	    $scope.icons[$scope.iconId].type = fileType+'File';
+	    
+	    $scope.saveActualPanel();
     }
     
     $scope.removeIconFile = function () {
@@ -217,11 +214,15 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
     	
     	$scope.icons[$scope.iconId].link = undefined;
 	    $scope.icons[$scope.iconId].linkFileName = undefined;
+	    
+	    $scope.saveActualPanel();
     }
     
     $scope.removeIcon = function (id) {  
 	    $scope.icons[id] = undefined;
 	    $scope.iconId = undefined;
+	    
+	    $scope.saveActualPanel();
 	    
 	    if(!$scope.$$phase && !$scope.$root.$$phase)
 	    	$scope.$apply();   
@@ -230,8 +231,10 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
     
     /* BACKGROUND */
     $scope.addBackground = function (src, fileType) {
-	    var background = generateBackground(src, fileType);
+	    var background = BackgroundFactory.generateBackground(src, fileType);
 	    $scope.panels[$scope.selectedPanelIndex].background = background;
+	    
+	    $scope.saveActualPanel();
     }
     
     $scope.removeBackground = function () {
@@ -244,6 +247,8 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 			})
 
 	    $scope.panels[$scope.selectedPanelIndex].background = undefined;
+	    
+	    $scope.saveActualPanel();
     }
     
     
