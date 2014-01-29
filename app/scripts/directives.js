@@ -1,25 +1,47 @@
+panoply.directive('resizable', [function() { 
+	
+	return {
+		restrict: 'A',
+		replace: false,
+		link: function(scope, element, attrs)  {
+			 $(element).resizable();	
+		}
+	}
+	
+}]);
+
+
 panoply.directive('draggable', [function() { 
 	
 	return {
 		restrict: 'A',
-		replace: true,
+		replace: false,
 		link: function(scope, element, attrs)  {
 			
 			element.bind("load" , function(event){ 
 				
-				scope.icons[element[0].id].nWidth = element[0].naturalWidth;
-				scope.icons[element[0].id].nHeight = element[0].naturalHeight;
-				
-				if (element[0].naturalWidth < 200)
-					scope.icons[element[0].id].width = element[0].naturalWidth;
-				
-				if (scope.icons[element[0].id].height == undefined)
-					scope.icons[element[0].id].height = Math.ceil(element[0].naturalHeight*scope.icons[element[0].id].width/element[0].naturalWidth);
-				
-				console.log('je passe');
-				
-				if(!scope.$$phase && !scope.$root.$$phase)
-					scope.$apply();
+				if (scope.icons[element[0].id].nWidth == undefined)
+				{
+					scope.icons[element[0].id].nWidth = element[0].naturalWidth;
+					scope.icons[element[0].id].nHeight = element[0].naturalHeight;
+					
+					if (scope.icons[element[0].id].isClear == true)
+					{
+						scope.icons[element[0].id].width = 200;
+						scope.icons[element[0].id].height = 200;
+					}
+					else
+					{
+						if (element[0].naturalWidth < 200)
+							scope.icons[element[0].id].width = element[0].naturalWidth;
+					
+						if (scope.icons[element[0].id].height == undefined)
+							scope.icons[element[0].id].height = Math.ceil(element[0].naturalHeight*scope.icons[element[0].id].width/element[0].naturalWidth);
+					}
+									
+					if(!scope.$$phase && !scope.$root.$$phase)
+						scope.$apply();
+				}
 				       
             });
 			

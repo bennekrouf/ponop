@@ -24,7 +24,8 @@ exports.upload = function(req, res) {
 		 var imgDimension = {};
 		 
 		 zipEntries.forEach(function(zipEntry) {
-			 if (!zipEntry.isDirectory) 
+		 				 	
+			 if (!zipEntry.isDirectory && zipEntry.name.charAt(0) != '.') 
 			 {
 			 	zip.extractEntryTo(zipEntry.entryName, target_path, /*maintainEntryPath*/false, /*overwrite*/true);
 			 	
@@ -33,7 +34,11 @@ exports.upload = function(req, res) {
 			 	
 			 	var extension = zipEntry.name.split('.').pop().toLowerCase();
 			 	if (extension === 'jpg' || extension === 'png' || extension === 'bmp' || extension === 'jpeg')
+			 	{
+				 	console.log(extension);
+				 	console.log(zipEntry.name);
 				 	imgDimension[zipEntry.name] = sizeOf(target_path +'/' + zipEntry.name);
+			 	}	
 			 }
 		});
 		 		 
@@ -82,7 +87,8 @@ exports.createPresentation = function(req, res){
 	var id = generateId();
 	
 	// Créer un répertoire local avec la présentation
-	mkdirp('./app/uploads/'+id, function(err) { 
+	mkdirp('./app/uploads/'+id, function(err) {
+		fs.createReadStream('./app/img/button_clear.png').pipe(fs.createWriteStream('./app/uploads/'+id+'/button_clear.png'));
 	    res.send(200, id);
 	});
 
@@ -105,6 +111,11 @@ exports.json = function (req, res) {
 	var presentationId = req.body.presentationId;
 	var json = req.body.json;
 	
+	var path_files = require('path').normalize(__dirname + '/../app/uploads/'+ presentationId);
+	
+	if(fs.existsSync(path_files + '/JSON_Input.json'))
+		 fs.unlinkSync(path_files + '/JSON_Input.json');
+	
 	fs.appendFile('./app/uploads/' + presentationId + '/JSON_Input.json', json, function(err) {
         if(err) 
             res.send(500, 'Problème JSON');
@@ -117,6 +128,9 @@ exports.zip = function (req, res) {
 
 	var presentationId = req.headers.cookie.substr(req.headers.cookie.lastIndexOf('=') + 1);
 	var path_files = require('path').normalize(__dirname + '/../app/uploads/'+ presentationId);
+	
+	if(fs.existsSync(path_files + '/archive.zip'))
+		 fs.unlinkSync(path_files + '/archive.zip');
 	
 	var zip = new AdmZip();	
 	zip.addLocalFolder(path_files);	

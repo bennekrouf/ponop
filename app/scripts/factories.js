@@ -60,24 +60,19 @@ panoply.factory('PanelsFactory', ['$cookies', 'IconsFactory', 'BackgroundFactory
 			        icon.link = target_path + iOSIcon.link;
 			        icon.linkFileName = iOSIcon.link;
 			        
+			        if (iOSIcon.imageUp === 'button_clear.png')
+			        	icon.isClear = true;
+			        
 			        icon.nWidth = imgDimensions[iOSIcon.imageUp].width;
 			        icon.nHeight = imgDimensions[iOSIcon.imageUp].height;
 			        
 			        icon.width = iOSIcon.scaleX * icon.nWidth / 2;
 			        icon.height = iOSIcon.scaleY * icon.nHeight / 2;
 			        
-			        icon.left = iOSIcon.posX/2 - icon.width/4;
-			        icon.top = (1536-iOSIcon.posY)/2 - icon.height/4;
-			        
-			        
+			        icon.left = iOSIcon.posX/2 - icon.width/2;
+			        icon.top = (1536-iOSIcon.posY)/2 - icon.height/2;
 			        
  			        icons[icon.id] = icon;
- 			        if (iOSIcon.imageUp === 'cache.png')
- 			        {
- 					 	console.log(icon.height);
- 					 	console.log(icons[icon.id]);
- 					 	console.log(icons[icon.id].height);
- 					}
 		        }
 		        
 		        panel.icons = icons;
@@ -118,6 +113,8 @@ panoply.factory('IconsFactory', function() {
 			//position
 			icon.top = undefined;
 			icon.left = undefined;
+			
+			icon.isClear = undefined;
 			
 			return icon;
 		}

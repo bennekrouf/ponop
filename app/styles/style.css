@@ -9,6 +9,7 @@
     background-repeat: no-repeat;
     background-position: center center;
     z-index:0;
+    margin-left: -15px; /*correspond au padding-left de la grid bootstrap */
 }
 
 
@@ -55,6 +56,10 @@
 	position: relative;
 	left: 5px;
 	top: 5px;
+}
+
+.clearIcon {
+	border: 1px solid black;
 }
 
 .panel {

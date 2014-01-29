@@ -32,6 +32,7 @@
     <script src="scripts/factories.js"></script>
     
     <link href="styles/style.css" rel="stylesheet">
+    <link href="styles/cgi-style.css" rel="stylesheet">
 
     <title>Panoply</title>
 </head>
@@ -90,9 +91,9 @@
 					
 					<div ng-style='{height: icons[iconIdUploaded].height}' ng-model='icons[iconIdUploaded]'> <!-- add icon -->
 						<legend>Ajout d'une icône</legend>
-						<div class="blockCenter" id='iconPlace'>
+						<div class="center-block" id='iconPlace'>
 							
-							<img ng-if="iconIdUploaded" ng-model='icons[iconIdUploaded]' id='{{ icons[iconIdUploaded].id }}' ng-style='{width:icons[iconIdUploaded].width, height:icons[iconIdUploaded].height }' ng-click="iconSelected(undefined, $event)" ng-src='{{icons[iconIdUploaded].src}}' class='icon draggable-object blockCenter' draggable/>
+							<img ng-if="iconIdUploaded" ng-model='icons[iconIdUploaded]' id='{{ icons[iconIdUploaded].id }}' ng-style='{width:icons[iconIdUploaded].width, height:icons[iconIdUploaded].height }' ng-click="iconSelected(undefined, $event)" ng-class="{'clearIcon': icons[iconIdUploaded].isClear}" ng-src='{{icons[iconIdUploaded].src}}' class='icon draggable-object blockCenter' draggable/>
 							
 						</div>
 						
@@ -104,6 +105,8 @@
 								<span>Charger une icone</span>
 								<input id="iconeUpload" type="file" ng-file-select="onFileSelect($files, $event)">
 							</span>
+							
+							<button type="button" class="btn btn-default" ng-click="addIcon('img/button_clear.png')">Ajouter une zone cliquable</button>
 							
 							<div class="progress" style='margin-top:20px;'>
 								<div class="progress-bar" role="progressbar" ng-model='progressBarIcon' aria-valuenow="{{ progressBarIcon }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ progressBarIcon }}%;">
@@ -156,14 +159,11 @@
 			</div> <!-- end icon -->
 			
 			<div class="col-lg-8" id="centerColumn"> <!-- workspace -->
-				<div class="minHeight">
-					<div id="workspace" ng-style="{backgroundImage: 'url(\''+panels[selectedPanelIndex].background.src+'\')'}" droppable>
+					<div id="workspace" class='minHeight' ng-style="{backgroundImage: 'url(\''+panels[selectedPanelIndex].background.src+'\')'}" droppable>
 						
-						<img  ng-repeat="icon in icons"  id='{{icon.id}}' ng-click="iconSelected(icon.id, $event)" ng-src='{{icon.src}}' ng-style='{width:icon.width, height:icon.height, top:icon.top, left:icon.left  }' class='icon draggable-object' ng-if='icon.dropped' draggable/>
-						
-						
+						<img  ng-repeat="icon in icons"  id='{{icon.id}}' ng-click="iconSelected(icon.id, $event)" ng-src='{{icon.src}}' ng-style='{width:icon.width, height:icon.height, top:icon.top, left:icon.left }' class='icon draggable-object' ng-class="{'clearIcon': icon.isClear}" ng-if='icon.dropped'  draggable/>
+
 					</div>
-				</div>
 			</div> <!-- end workspace -->
 			
 			<div class="col-lg-2 borderLeft" id="rightColumn">

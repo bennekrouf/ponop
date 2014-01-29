@@ -84,10 +84,16 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 	    	acceptedType = ['kLoad'];
 	    	typeOfUpload = 'zip';
     	}
-    		
+    	
+    	console.log(file);
+    	console.log(file.type);
+    	
     	var fileExtension = file.type.substr(file.type.lastIndexOf('/') + 1);		
 		var fileType = ifFileIsAccepted(fileExtension, acceptedType);
-
+		
+		console.log(fileExtension);
+		console.log(fileType);
+		
 		if (!fileType)
 			alert("Ce format de fichier n'est pas autorisé");
 		else
@@ -137,7 +143,7 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 			.error(function (error) {
 				console.log(error);
 			})
-			.then(function (success, error, progress) {
+			.then(function (success, error, progress) {				
 				if (typeOfUpload === 'icon')
 					$scope.progressBarIcon = parseInt(0);
 				else if (typeOfUpload === 'background')
@@ -156,7 +162,7 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
     
     $scope.addPanel = function () {
 	    $scope.panels.push(PanelsFactory.generatePanel());
-	    $scope.panelSelected($scope.panels.length - 1, undefined)
+	    $scope.panelSelected($scope.panels.length - 1, undefined);
     }
     
     $scope.removePanel = function() {
@@ -197,6 +203,8 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
     
     $scope.addIcon = function (src) {
 	    var icon = IconsFactory.generateIcon(src);
+	    if (src === 'img/button_clear.png')
+	    	icon.isClear = true;
 	    
 	    $scope.icons[icon.id] = icon;
 	    $scope.iconIdUploaded = icon.id;
@@ -236,7 +244,7 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
     }
     
     $scope.removeIcon = function (id) {  
-	    $scope.icons[id] = undefined;
+	    delete $scope.icons[id];
 	    $scope.iconId = undefined;
 	    
 	    $scope.saveActualPanel();

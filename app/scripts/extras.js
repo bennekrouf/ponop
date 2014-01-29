@@ -4,7 +4,7 @@ var panoplyTypes = 	{
 						'kImage': ['jpg', 'jpeg', 'png', 'bmp'],
 						'kVideo': ['mp4'],
 						'kPDF':	['pdf'],
-						'kLoad': ['zip']	
+						'kLoad': ['zip', 'x-zip-compressed']	
 					};
 
 
@@ -69,9 +69,11 @@ function generateJSON(userPanels) {
 	{
 		var icons = new Array();
 		
+		console.log(userPanels[i].icons);
+		
 		for (var tmpIconId in userPanels[i].icons)
 		{				
-			var tmpIcon = userPanels[i].icons[tmpIconId]
+			var tmpIcon = userPanels[i].icons[tmpIconId];
 			
 			if (tmpIcon.dropped != undefined)
 			{
@@ -107,8 +109,8 @@ function generateJSON(userPanels) {
 		
 		var background = {
 			"type": tmpBackground.type,
-			"fileName": tmpBackground.fileName,
-			"videoBackground": tmpBackground.fileName
+			"fileName": tmpBackground.fileName
+			//"videoBackground": tmpBackground.fileName
 		}
 		
 		
