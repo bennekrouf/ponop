@@ -4,7 +4,7 @@
   "dependencies": {
     "archiver": "~0.5.1",
     "adm-zip": "~0.4.3",
-    "image-size", "~0.2.1"
+    "image-size": "~0.2.1"
   },
   "devDependencies": {
     "express": "3.x",
