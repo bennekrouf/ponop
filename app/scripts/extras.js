@@ -148,3 +148,25 @@ Array.prototype.remove = function(from, to) {
   this.length = from < 0 ? this.length + from : from;
   return this.push.apply(this, rest);
 };
+
+
+function getNaturalSize(element) {
+	naturalSize = {
+		"naturalWidth": element.naturalWidth,
+		"naturalHeight": element.naturalHeight,
+	}
+
+	//dans le cas ou ces valeur sont undefined on est sur un navigateur qui ne prend pas en compte naturalHeight et naturalWidth
+	if (naturalSize.naturalHeight == undefined && naturalSize.naturalWidth == undefined) {
+		var img = new Image();
+    	img.src = element.src;
+    	naturalSize = {
+			"naturalWidth": img.width,
+			"naturalHeight": img.height,
+		}
+	}
+
+	return naturalSize;
+}
+
+

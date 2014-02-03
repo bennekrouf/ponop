@@ -19,11 +19,10 @@ panoply.directive('draggable', [function() {
 		link: function(scope, element, attrs)  {
 			
 			element.bind("load" , function(event){ 
-				
 				if (scope.icons[element[0].id].nWidth == undefined)
 				{
-					scope.icons[element[0].id].nWidth = element[0].naturalWidth;
-					scope.icons[element[0].id].nHeight = element[0].naturalHeight;
+					scope.icons[element[0].id].nWidth = getNaturalSize(element[0]).naturalWidth;
+					scope.icons[element[0].id].nHeight = getNaturalSize(element[0]).naturalHeight;
 					
 					if (scope.icons[element[0].id].isClear == true)
 					{
@@ -33,10 +32,11 @@ panoply.directive('draggable', [function() {
 					else
 					{
 						if (element[0].naturalWidth < 200)
-							scope.icons[element[0].id].width = element[0].naturalWidth;
-					
-						if (scope.icons[element[0].id].height == undefined)
-							scope.icons[element[0].id].height = Math.ceil(element[0].naturalHeight*scope.icons[element[0].id].width/element[0].naturalWidth);
+							scope.icons[element[0].id].width = getNaturalSize(element[0]).naturalWidth;
+						
+						if (scope.icons[element[0].id].height == undefined){
+							scope.icons[element[0].id].height = Math.ceil(getNaturalSize(element[0]).naturalHeight*scope.icons[element[0].id].width/getNaturalSize(element[0]).naturalWidth);
+						}
 					}
 									
 					if(!scope.$$phase && !scope.$root.$$phase)
