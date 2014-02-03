@@ -117,3 +117,10 @@
 .container {
 	width: auto;
 }
+
+/******************** .:° Correction angularFileUpload ie8 °:. ************************/
+
+.js-fileapi-wrapper {
+	position:static !important;
+	overflow:visible!important;
+}

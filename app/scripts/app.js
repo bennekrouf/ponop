@@ -196,6 +196,13 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
     	$scope.panels[$scope.selectedPanelIndex].iconIdUploaded = $scope.iconIdUploaded;
     	
     	PanelsFactory.savedPanelsInCookie($scope.panels);
+
+  //   	html2canvas($('#workspace'), {
+		//   	onrendered: function(canvas) {
+		//     	//$(".panelSelected").css('background-image','url('+canvas.toDataURL("image/png")+')');
+		//     	//document.body.appendChild(canvas);
+		//   	}
+		// });
     }
     
     /* ICON */

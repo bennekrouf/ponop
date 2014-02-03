@@ -7,7 +7,6 @@ var panoplyTypes = 	{
 						'kLoad': ['zip', 'x-zip-compressed']	
 					};
 
-
 function browserWidthChange()
 {
 	var winWidth = $(window).width();
