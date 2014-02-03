@@ -81,7 +81,7 @@
 			</div>
 			
 			<div id='listLayer'>
-				<div class='panel' ng-repeat='panel in panels' ng-click="panelSelected($index, $event)" ng-class="{ 'panelSelected': $index == selectedPanelIndex}" ng-style="{backgroundImage: 'url(\''+panels[$index].background.src+'\')'}"></div>
+				<div class='panel' ng-repeat='panel in panels' ng-click="panelSelected($index, $event)" ng-class="{ 'panelSelected': $index == selectedPanelIndex}" ng-style="{backgroundImage: 'url(\''+panels[$index].background.src+'\')'}" style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true,src='{{panels[$index].background.src}}',sizingMethod='scale');"></div>
 			</div>
 		</div> 
 	</section><!-- end list panneaux -->
@@ -164,7 +164,7 @@
 			</div> <!-- end icon -->
 			
 			<div class="col-lg-8" id="centerColumn"> <!-- workspace -->
-					<div id="workspace" class='minHeight' ng-style="{backgroundImage: 'url(\''+panels[selectedPanelIndex].background.src+'\')'}" droppable>
+					<div id="workspace" class='minHeight' ng-style="{backgroundImage: 'url(\''+panels[selectedPanelIndex].background.src+'\')'}" style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true,src='{{panels[selectedPanelIndex].background.src}}',sizingMethod='scale');" droppable>
 						
 						<img  ng-repeat="icon in icons"  id='{{icon.id}}' ng-click="iconSelected(icon.id, $event)" ng-src='{{icon.src}}' ng-style='{width:icon.width, height:icon.height, top:icon.top, left:icon.left }' class='icon draggable-object' ng-class="{'clearIcon': icon.isClear}" ng-if='icon.dropped'  draggable/>
 
