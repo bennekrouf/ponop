@@ -4,7 +4,36 @@ panoply.directive('resizable', [function() {
 		restrict: 'A',
 		replace: false,
 		link: function(scope, element, attrs)  {
-			 $(element).resizable();	
+			console.log(element);
+			element.resizable({
+				containment: "#workspace",
+				aspectRatio: true,
+				start : function(event,ui) {
+					scope.iconSelected(ui.helper.attr('id'), event);
+				},
+				resize : function(event,ui) {
+					var width = element.css('width');
+					var height = element.css('height');
+
+					//on retire  "px" de la width et de la height
+					var reg=new RegExp("(px)", "g");
+					width = width.replace(reg,"");
+					height = height.replace(reg,"");
+
+					var img = element.children('img');
+
+					//on applique les nouvelles tailles au scope
+					scope.icons[element[0].id].height = height;
+					scope.icons[element[0].id].width = width;
+
+					if(!scope.$$phase && !scope.$root.$$phase)
+						scope.$apply();
+
+					//on applique les nouvelles tailles à l'image
+					img.css('width',width);
+					img.css('height',height);				
+				}
+			});	
 		}
 	}
 	
@@ -55,7 +84,7 @@ panoply.directive('draggable', [function() {
 				{			
 					scope.iconSelected(ui.helper.attr('id'), event);
 				},
-				snap: "workspace"
+				containment: "#workspace",
 			});
 			
 		}

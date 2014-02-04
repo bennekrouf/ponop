@@ -8,6 +8,7 @@
 
 	<script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/jquery-ui/ui/minified/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="vendor/jquery-ui/themes/base/jquery-ui.css">
 
     <link href="vendor/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -165,9 +166,13 @@
 			
 			<div class="col-lg-8" id="centerColumn"> <!-- workspace -->
 					<div id="workspace" class='minHeight' ng-style="{backgroundImage: 'url(\''+panels[selectedPanelIndex].background.src+'\')'}" style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true,src='{{panels[selectedPanelIndex].background.src}}',sizingMethod='scale');" droppable>
-						
-						<img  ng-repeat="icon in icons"  id='{{icon.id}}' ng-click="iconSelected(icon.id, $event)" ng-src='{{icon.src}}' ng-style='{width:icon.width, height:icon.height, top:icon.top, left:icon.left }' class='icon draggable-object' ng-class="{'clearIcon': icon.isClear}" ng-if='icon.dropped'  draggable/>
 
+
+						
+						<div ng-repeat="icon in icons"  id='{{icon.id}}' ng-click="iconSelected(icon.id, $event)"  ng-style='{width:icon.width, height:icon.height, top:icon.top, left:icon.left }' class='icon draggable-object' ng-class="{'clearIcon': icon.isClear}" ng-if='icon.dropped'  class="ui-widget-content" draggable resizable>
+
+						<img  ng-src='{{icon.src}}' ng-style='{width:icon.width, height:icon.height}' />
+						</div>
 					</div>
 			</div> <!-- end workspace -->
 			

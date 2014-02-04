@@ -126,7 +126,10 @@ exports.json = function (req, res) {
 
 exports.zip = function (req, res) {
 
-	var presentationId = req.headers.cookie.substr(req.headers.cookie.lastIndexOf('=') + 1);
+	cookies = parseCookies(req);
+
+	var presentationId = cookies["presentationId"];
+
 	var path_files = require('path').normalize(__dirname + '/../app/uploads/'+ presentationId);
 	
 	if(fs.existsSync(path_files + '/archive.zip'))
@@ -138,6 +141,17 @@ exports.zip = function (req, res) {
 	res.download(path_files + '/archive.zip');
 };
 
+function parseCookies (request) {
+    var list = {},
+        rc = request.headers.cookie;
+
+    rc && rc.split(';').forEach(function( cookie ) {
+        var parts = cookie.split('=');
+        list[parts.shift().trim()] = unescape(parts.join('='));
+    });
+
+    return list;
+}
 
 exports.remove = function (req, res) {
 	var file = req.body.fileName;

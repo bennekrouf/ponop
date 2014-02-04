@@ -34,7 +34,8 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
     $scope.$on('$locationChangeStart', function( event ) {
     	$scope.saveActualPanel();
 	});
-    
+
+
     $scope.reinitialize = function() {
 	    var answer = confirm("Attention, toutes les modifications apportés à la présentation seront supprimées")
 	    if (answer)
