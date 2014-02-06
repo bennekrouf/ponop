@@ -45,7 +45,8 @@ panoply.factory('PanelsFactory', ['$cookies', 'IconsFactory', 'BackgroundFactory
 		        var panel = this.generatePanel();
 		        
 		        var iOSBackground = iOSPanels[i].background;
-		        var background = BackgroundFactory.generateBackground(target_path + iOSBackground.fileName, iOSBackground.type);
+
+		        var background = BackgroundFactory.generateBackground(target_path + iOSBackground.fileName, iOSBackground.type, target_path + iOSBackground.videoBackground);
 		        
 		        var iOSIcons = iOSPanels[i].icons;
 		        var icons = {};
@@ -127,13 +128,22 @@ panoply.factory('BackgroundFactory', function() {
 	
 	return {
 	
-		generateBackground: function(src, type) {
+		generateBackground: function(src, type, imgSrc) {
 			var background = {};
 		
 			background.type = type;
 			background.fileName = src.substr(src.lastIndexOf('/') + 1);
 			background.src = src;
-	
+			console.log(imgSrc);
+			if (background.type == 'kVideo') {
+				background.videoBackgroundSrc = imgSrc;
+				background.videoBackground = imgSrc.substr(imgSrc.lastIndexOf('/') + 1);
+			}
+			else{
+				background.videoBackgroundSrc = undefined;
+				background.videoBackground = undefined;
+			}
+
 			return background;
 		}
 	}

@@ -75,6 +75,12 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
     		acceptedType = ['kImage', 'kVideo'];
     		typeOfUpload = 'background';
     	}
+    	else if (idSender === 'imageBackgroundUpload')
+    	{
+    		//cas d'une image en background quand le background est une vidéo
+    		acceptedType = ['kImage'];
+    		typeOfUpload = 'backgroundImage';
+    	}
     	else if (idSender === 'iconLinkUpload')
     	{
     		acceptedType = ['kImage', 'kVideo', 'kPDF'];
@@ -115,6 +121,8 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 					$scope.progressBarIcon = parseInt(100.0 * evt.loaded / evt.total);
 				else if (typeOfUpload === 'background')
 					$scope.progressBarBackground = parseInt(100.0 * evt.loaded / evt.total);
+				else if (typeOfUpload === 'backgroundImage')
+					$scope.progressBarImageBackground = parseInt(100.0 * evt.loaded / evt.total);
 				else if (typeOfUpload === 'file')
 					$scope.progressBarFile = parseInt(100.0 * evt.loaded / evt.total);
 			})
@@ -123,6 +131,8 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 					$scope.addIcon(data.url);
 				else if (typeOfUpload === 'background')
 					$scope.addBackground(data.url, fileType);
+				else if (typeOfUpload === 'backgroundImage')
+					$scope.addBackgroundImage(data.url, fileType);
 				else if (typeOfUpload === 'file')
 					$scope.addIconFile(data.url, fileType)
 				else if (typeOfUpload === 'zip')
@@ -149,6 +159,8 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 					$scope.progressBarIcon = parseInt(0);
 				else if (typeOfUpload === 'background')
 					$scope.progressBarBackground = parseInt(0);
+				else if (typeOfUpload === 'backgroundImage')
+					$scope.progressBarImageBackground = parseInt(0);
 				else if (typeOfUpload === 'file')
 					$scope.progressBarFile = parseInt(0);
 			})
@@ -283,7 +295,64 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 	    
 	    $scope.saveActualPanel();
     }
+
+    $scope.addBackgroundImage = function (src, fileType) {
+    	//on sauvegarde l'image de bg 
+	    $scope.panels[$scope.selectedPanelIndex].background.videoBackgroundSrc = src;
+		$scope.panels[$scope.selectedPanelIndex].background.videoBackground = src.substr(src.lastIndexOf('/') + 1);
+	    $scope.saveActualPanel();
+    }
+
+    $scope.removeBackgroundImage = function () {
+    	
+    	$http({
+				url: '/remove', 
+				method: "POST",
+				data: {fileName: $scope.panels[$scope.selectedPanelIndex].background.videoBackground, presentationId: $cookies.presentationId},
+				headers: {'Content-Type': 'application/json'}
+			})
+
+	    $scope.panels[$scope.selectedPanelIndex].background.videoBackground = undefined;
+	    $scope.panels[$scope.selectedPanelIndex].background.videoBackgroundSrc = undefined;
+	    
+	    $scope.saveActualPanel();
+    }
     
+    $scope.getPannelBackground = function($index) {
+    	var style = {};
+    	
+    	//dans le cas ou un imageBackgroundSrc est définit, on l'affiche
+    	if ($scope.panels[$index].background != undefined) {
+			if ($scope.panels[$index].background.videoBackgroundSrc != undefined) {
+				style = {
+					'backgroundImage': 'url(\''+$scope.panels[$index].background.videoBackgroundSrc+'\')',
+					'filter':'progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true,src='+$scope.panels[$index].background.videoBackgroundSrc+',sizingMethod="scale")',
+				};
+			}
+			else{
+				style = {
+					'backgroundImage': 'url(\''+$scope.panels[$index].background.src+'\')',
+					'filter':'progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true,src='+$scope.panels[$index].background.src+',sizingMethod="scale")',
+				};
+			}
+		}
+		return style;
+	}
+
+	$scope.getWorkSpaceBackground = function($index) {
+    	var style = {};
+    	
+    	//dans le cas ou un imageBackgroundSrc est définit, on l'affiche
+    	if ($scope.panels[$index].background != undefined) {
+			if ($scope.panels[$index].background.videoBackgroundSrc != undefined) {
+				style = {'backgroundImage': 'url(\''+$scope.panels[$index].background.videoBackgroundSrc+'\')'};
+			}
+			else{
+				style = {'backgroundImage': 'url(\''+$scope.panels[$index].background.src+'\')'};
+			}
+		}
+		return style;
+	}
     
     /*JSON */
     $scope.generateZip = function (event)

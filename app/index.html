@@ -13,10 +13,10 @@
     <link href="vendor/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script>
 
+
     <!--[if lt IE 9]>  
    		<script src="vendor/respond/dest/respond.min.js"></script>
 	<![endif]-->
-	
 
 	<script src="vendor/ng-file-upload/angular-file-upload-shim.min.js"></script><!-- A METTRE AVANT ANGULAR -->
 	
@@ -24,6 +24,7 @@
     <script src="vendor/angular-route/angular-route.min.js"></script>
     <script src="vendor/ng-file-upload/angular-file-upload.min.js"></script> <!-- A METTRE AVANT COOKIE -->
     <script src="vendor/angular-cookies/angular-cookies.min.js"></script>
+
 
     <script type="text/javascript" src="vendor/html2canvas/build/html2canvas.min.js"></script>
     
@@ -82,7 +83,7 @@
 			</div>
 			
 			<div id='listLayer'>
-				<div class='panel' ng-repeat='panel in panels' ng-click="panelSelected($index, $event)" ng-class="{ 'panelSelected': $index == selectedPanelIndex}" ng-style="{backgroundImage: 'url(\''+panels[$index].background.src+'\')'}" style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true,src='{{panels[$index].background.src}}',sizingMethod='scale');"></div>
+				<div class='panel' ng-repeat='panel in panels' ng-click="panelSelected($index, $event)" ng-class="{ 'panelSelected': $index == selectedPanelIndex}" ng-style="getPannelBackground($index)"></div>
 			</div>
 		</div> 
 	</section><!-- end list panneaux -->
@@ -158,6 +159,39 @@
 							</div>
 							
 						</form>
+
+						<legend ng-if="panels[selectedPanelIndex].background.type == 'kVideo'">Image de background</legend>
+						<form class="form-horizontal" ng-if="panels[selectedPanelIndex].background.type == 'kVideo'">
+							<div class="form-group">
+								<label class="col-lg-4 control-label" for="linkImgBackground">Lien :</label>
+								<div class="col-lg-8">
+									<a href='{{ panels[selectedPanelIndex].background.videoBackgroundSrc }}' ng-model='panels[selectedPanelIndex].background'><p class="form-control-static" id="linkImgBackground">{{ panels[selectedPanelIndex].background.videoBackground }}</p></a>
+								</div>
+							</div>
+							
+							<br/>
+							
+							<button ng-if="panels[selectedPanelIndex].background.videoBackgroundSrc" type="button" class="blockCenter btn btn-danger btn-sm" id="deleteLinkBackground" ng-click="removeBackgroundImage()" hidden>Supprimer</button>
+							
+							<div ng-if="!panels[selectedPanelIndex].background.videoBackgroundSrc" class="blockCenter" id="inputBackground">
+								<!--<button ng-if="!panels[selectedPanelIndex].background" class="btn btn-success" type="button" ng-click="addBackground()">Charger un arrière plan</button>-->
+								
+								<span class="btn btn-success fileinput-button">
+									<i class="icon-plus icon-white"></i>
+									<span>Charger une image de background</span>
+									<input id="imageBackgroundUpload" type="file" ng-file-select="onFileSelect($files, $event)">
+								</span>
+								
+								<div class="progress" style='margin-top:20px;'>
+									<div class="progress-bar" role="progressbar" ng-model='progressBarImageBackground' aria-valuenow="{{ progressBarImageBackground }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ progressBarImageBackground }}%;">
+										<span class="sr-only">{{ progressBarImageBackground }}% Complete</span>
+									</div>
+								</div>
+								
+								
+							</div>
+							
+						</form>
 					</div>
 					
 					<br/><br/>
@@ -165,9 +199,13 @@
 			</div> <!-- end icon -->
 			
 			<div class="col-lg-8" id="centerColumn"> <!-- workspace -->
-					<div id="workspace" class='minHeight' ng-style="{backgroundImage: 'url(\''+panels[selectedPanelIndex].background.src+'\')'}" style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true,src='{{panels[selectedPanelIndex].background.src}}',sizingMethod='scale');" droppable>
+					<div id="workspace" class='minHeight' ng-style="getPannelBackground(selectedPanelIndex)" droppable>
 
+					<video id="videoBackground" autoplay loop ng-if="panels[selectedPanelIndex].background.type == 'kVideo'">
+						<!-- MP4 for Safari, IE9, iPhone, iPad, Android, and Windows Phone 7 -->
+						<source type="video/mp4" src="{{panels[selectedPanelIndex].background.src}}" />
 
+					</video>
 						
 						<div ng-repeat="icon in icons"  id='{{icon.id}}' ng-click="iconSelected(icon.id, $event)"  ng-style='{width:icon.width, height:icon.height, top:icon.top, left:icon.left }' class='icon draggable-object' ng-class="{'clearIcon': icon.isClear}" ng-if='icon.dropped'  class="ui-widget-content" draggable resizable>
 

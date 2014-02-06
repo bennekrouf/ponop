@@ -12,6 +12,12 @@
     margin-left: -15px; /*correspond au padding-left de la grid bootstrap */
 }
 
+#videoBackground{
+	vertical-align: middle;
+	width:100%;
+	height:100%;
+}
+
 
 #iconPlace {
 	width: 200px;
@@ -116,6 +122,10 @@
 
 .container {
 	width: auto;
+}
+
+video{
+	display: inline-block;
 }
 
 /******************** .:° Correction angularFileUpload ie8 °:. ************************/

@@ -103,13 +103,15 @@ function generateJSON(userPanels) {
 			tmpBackground.type = '';
 			tmpBackground.fileName = '';
 			tmpBackground.src = '';
+			tmpBackground.videoBackground = '';
+			tmpBackground.videoBackgroundSrc = '';
 		}
 			
 		
 		var background = {
 			"type": tmpBackground.type,
-			"fileName": tmpBackground.fileName
-			//"videoBackground": tmpBackground.fileName
+			"fileName": tmpBackground.fileName,
+			"videoBackground": tmpBackground.videoBackground
 		}
 		
 		

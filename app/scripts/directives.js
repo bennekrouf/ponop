@@ -39,7 +39,6 @@ panoply.directive('resizable', [function() {
 	
 }]);
 
-
 panoply.directive('draggable', [function() { 
 	
 	return {
