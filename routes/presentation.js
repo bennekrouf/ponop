@@ -190,5 +190,3 @@ exports.reinitialization = function (req, res) {
 		res.send(500, 'Folder not found');
 }
 
-
-

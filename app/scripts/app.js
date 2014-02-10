@@ -20,7 +20,7 @@ panoply.run(['$rootScope', '$http', '$cookies',  function ($rootScope, $http, $c
   	
   	if ($cookies.presentationId == undefined)
   	{
-	  	$http({url: '/createPresentation',method: "POST"})
+	  	$http({url: 'createPresentation',method: "POST"})
 			.then(function(response) {
         		$cookies.presentationId = response.data;
 			}, function(error) {});
@@ -48,7 +48,7 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 			$scope.iconId = undefined;
 			$scope.iconIdUploaded = $scope.panels[$scope.selectedPanelIndex].iconIdUploaded
 			
-			$http({url: '/reinitialization', method: "POST", data: {'presentationId': $cookies.presentationId}, headers: {'Content-Type': 'application/json'}});
+			$http({url: 'reinitialization', method: "POST", data: {'presentationId': $cookies.presentationId}, headers: {'Content-Type': 'application/json'}});
 			
 			if(!$scope.$$phase && !$scope.$root.$$phase)
 	    		$scope.$apply();   
@@ -111,7 +111,7 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 	$scope.upload = function (file, typeOfUpload, fileType) {
 		$upload
 			.upload({
-				url: '/upload',
+				url: 'upload',
 				method: 'POST',
 				data: {'presentationId': $cookies.presentationId},
 				file: file,
@@ -251,7 +251,7 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
     $scope.removeIconFile = function () {
     	
     	 $http({
-				url: '/remove', 
+				url: 'remove', 
 				method: "POST",
 				data: {fileName: $scope.icons[$scope.iconId].linkFileName, presentationId: $cookies.presentationId},
 				headers: {'Content-Type': 'application/json'}
@@ -285,7 +285,7 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
     $scope.removeBackground = function () {
     	
     	$http({
-				url: '/remove', 
+				url: 'remove', 
 				method: "POST",
 				data: {fileName: $scope.panels[$scope.selectedPanelIndex].background.fileName, presentationId: $cookies.presentationId},
 				headers: {'Content-Type': 'application/json'}
@@ -306,7 +306,7 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
     $scope.removeBackgroundImage = function () {
     	
     	$http({
-				url: '/remove', 
+				url: 'remove', 
 				method: "POST",
 				data: {fileName: $scope.panels[$scope.selectedPanelIndex].background.videoBackground, presentationId: $cookies.presentationId},
 				headers: {'Content-Type': 'application/json'}
@@ -362,7 +362,7 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 	    var JSONFile = generateJSON($scope.panels);
 				
 		$http({
-				url: '/json', 
+				url: 'json', 
 				method: "POST", 
 				data: {json: JSON.stringify(JSONFile), presentationId: $cookies.presentationId},
 				headers: {'Content-Type': 'application/json'}

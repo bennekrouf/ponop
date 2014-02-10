@@ -103,6 +103,8 @@ function generateJSON(userPanels) {
 			tmpBackground.type = '';
 			tmpBackground.fileName = '';
 			tmpBackground.src = '';
+		}
+		else if(tmpBackground.videoBackgroundSrc == undefined){
 			tmpBackground.videoBackground = '';
 			tmpBackground.videoBackgroundSrc = '';
 		}
@@ -111,9 +113,11 @@ function generateJSON(userPanels) {
 		var background = {
 			"type": tmpBackground.type,
 			"fileName": tmpBackground.fileName,
-			"videoBackground": tmpBackground.videoBackground
 		}
 		
+		if(tmpBackground.videoBackground != undefined && tmpBackground.videoBackground != ""){
+			background.videoBackground = tmpBackground.videoBackground;
+		}
 		
 		var panel = {
 			"id" : userPanels[i].id,

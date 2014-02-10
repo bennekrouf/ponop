@@ -4,7 +4,6 @@ panoply.directive('resizable', [function() {
 		restrict: 'A',
 		replace: false,
 		link: function(scope, element, attrs)  {
-			console.log(element);
 			element.resizable({
 				containment: "#workspace",
 				aspectRatio: true,
@@ -83,7 +82,7 @@ panoply.directive('draggable', [function() {
 				{			
 					scope.iconSelected(ui.helper.attr('id'), event);
 				},
-				containment: "#workspace",
+				snap: "#workspace",
 			});
 			
 		}
@@ -186,7 +185,7 @@ panoply.directive('trash', ['$http', '$cookies', function($http, $cookies) {
 			        	id = scope.iconId
 			        
 			        $http({
-				        url: '/remove', 
+				        url: 'remove', 
 						method: "POST",
 						data: {fileName: scope.icons[id].fileName, presentationId: $cookies.presentationId},
 						headers: {'Content-Type': 'application/json'}
@@ -195,7 +194,7 @@ panoply.directive('trash', ['$http', '$cookies', function($http, $cookies) {
 			        if (scope.icons[id].linkFileName != undefined)
 			        {
 				        $http({
-				        	url: '/remove', 
+				        	url: 'remove', 
 							method: "POST",
 							data: {fileName: scope.icons[id].linkFileName, presentationId: $cookies.presentationId},
 							headers: {'Content-Type': 'application/json'}
