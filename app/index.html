@@ -61,8 +61,8 @@
 		<!-- Collect the nav links, forms, and other content for toggling -->
 		<div class="collapse navbar-collapse navbar-ex1-collapse">
 			<ul class="nav navbar-nav">
-				<li><a id="saveCreation" ng-click="generateZip($event)" href="">Sauvegarder</a></li>
-				<li><a id="reinitCreation" ng-click="reinitialize()" href="">Réinitialiser</a></li>
+				<li><a id="saveCreation" ng-click="generateZip($event)" href="">Save</a></li>
+				<li><a id="reinitCreation" ng-click="reinitialize()" href="">Reset</a></li>
 		    </ul>
 		</div>
 	</nav>
@@ -72,12 +72,12 @@
 	<section><!-- list panneaux -->
 		<div id='headerLayer'>
 			<div class="rightCorner">
-				<button class="btn btn-success" type="button" ng-click="addPanel()">Ajouter un panneau</button>
-				<button id="deletePanoButton" class="btn btn-danger" type="button" ng-click="removePanel()" ng-disabled="panels.length <= 3">Supprimer un panneau</button>
+				<button class="btn btn-success" type="button" ng-click="addPanel()">Add a Pannel</button>
+				<button id="deletePanoButton" class="btn btn-danger" type="button" ng-click="removePanel()" ng-disabled="panels.length <= 3">Remove a Pannel</button>
 				
 				<span style="float: right;" class="btn btn-primary fileinput-button">
 					<i class="icon-plus icon-white"></i>
-					<span>Charger une présentation</span>
+					<span>Upload a presentation</span>
 					<input id="presentationUpload" type="file" ng-file-select="onFileSelect($files, $event)">
 				</span>
 			</div>
@@ -97,7 +97,7 @@
 			<div class="col-lg-2" id="leftColumn"> <!-- icon -->
 					
 					<div ng-style='{height: icons[iconIdUploaded].height}' ng-model='icons[iconIdUploaded]'> <!-- add icon -->
-						<legend>Ajout d'une icône</legend>
+						<legend>Add an Icon</legend>
 						<div class="center-block" id='iconPlace'>
 							
 							<img ng-if="iconIdUploaded" ng-model='icons[iconIdUploaded]' id='{{ icons[iconIdUploaded].id }}' ng-style='{width:icons[iconIdUploaded].width, height:icons[iconIdUploaded].height }' ng-click="iconSelected(undefined, $event)" ng-class="{'clearIcon': icons[iconIdUploaded].isClear}" ng-src='{{icons[iconIdUploaded].src}}' class='icon draggable-object blockCenter' draggable/>
@@ -109,11 +109,11 @@
 							
 							<span  class="btn btn-success fileinput-button">
 								<i class="icon-plus icon-white"></i>
-								<span>Charger une icone</span>
+								<span>Upload an Icon</span>
 								<input id="iconeUpload" type="file" ng-file-select="onFileSelect($files, $event)">
 							</span>
 							
-							<button type="button" class="btn btn-default" ng-click="addIcon('img/button_clear.png')">Ajouter une zone cliquable</button>
+							<button type="button" class="btn btn-default" ng-click="addIcon('img/button_clear.png')">Add a click area</button>
 							
 							<div class="progress" style='margin-top:20px;'>
 								<div class="progress-bar" role="progressbar" ng-model='progressBarIcon' aria-valuenow="{{ progressBarIcon }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ progressBarIcon }}%;">
@@ -125,12 +125,12 @@
 					</div>
 					
 					<div style="margin-top: 100px;"> <!-- add background -->
-						<legend>Ajouter l'arrière-plan</legend>
+						<legend>Add a Background</legend>
 						
 						<form class="form-horizontal">
 							
 							<div class="form-group">
-								<label class="col-lg-4 control-label" for="linkBackground">Lien :</label>
+								<label class="col-lg-4 control-label" for="linkBackground">Link :</label>
 								<div class="col-lg-8">
 									<a href='{{ panels[selectedPanelIndex].background.src }}' ng-model='panels[selectedPanelIndex].background'><p class="form-control-static" id="linkBackground">{{ panels[selectedPanelIndex].background.fileName }}</p></a>
 								</div>
@@ -138,14 +138,14 @@
 							
 							<br/>
 							
-							<button ng-if="panels[selectedPanelIndex].background.src" type="button" class="blockCenter btn btn-danger btn-sm" id="deleteLinkBackground" ng-click="removeBackground()" hidden>Supprimer</button>
+							<button ng-if="panels[selectedPanelIndex].background.src" type="button" class="blockCenter btn btn-danger btn-sm" id="deleteLinkBackground" ng-click="removeBackground()" hidden>Delete</button>
 							
 							<div ng-if="!panels[selectedPanelIndex].background" class="blockCenter" id="inputBackground">
 								<!--<button ng-if="!panels[selectedPanelIndex].background" class="btn btn-success" type="button" ng-click="addBackground()">Charger un arrière plan</button>-->
 								
 								<span class="btn btn-success fileinput-button">
 									<i class="icon-plus icon-white"></i>
-									<span>Charger un arrière plan</span>
+									<span>Upload a background</span>
 									<input id="backgroundUpload" type="file" ng-file-select="onFileSelect($files, $event)">
 								</span>
 								
@@ -160,10 +160,10 @@
 							
 						</form>
 
-						<legend ng-if="panels[selectedPanelIndex].background.type == 'kVideo'">Image de background</legend>
+						<legend ng-if="panels[selectedPanelIndex].background.type == 'kVideo'">Background Image</legend>
 						<form class="form-horizontal" ng-if="panels[selectedPanelIndex].background.type == 'kVideo'">
 							<div class="form-group">
-								<label class="col-lg-4 control-label" for="linkImgBackground">Lien :</label>
+								<label class="col-lg-4 control-label" for="linkImgBackground">Link :</label>
 								<div class="col-lg-8">
 									<a href='{{ panels[selectedPanelIndex].background.videoBackgroundSrc }}' ng-model='panels[selectedPanelIndex].background'><p class="form-control-static" id="linkImgBackground">{{ panels[selectedPanelIndex].background.videoBackground }}</p></a>
 								</div>
@@ -171,14 +171,14 @@
 							
 							<br/>
 							
-							<button ng-if="panels[selectedPanelIndex].background.videoBackgroundSrc" type="button" class="blockCenter btn btn-danger btn-sm" id="deleteLinkBackground" ng-click="removeBackgroundImage()" hidden>Supprimer</button>
+							<button ng-if="panels[selectedPanelIndex].background.videoBackgroundSrc" type="button" class="blockCenter btn btn-danger btn-sm" id="deleteLinkBackground" ng-click="removeBackgroundImage()" hidden>Delete</button>
 							
 							<div ng-if="!panels[selectedPanelIndex].background.videoBackgroundSrc" class="blockCenter" id="inputBackground">
 								<!--<button ng-if="!panels[selectedPanelIndex].background" class="btn btn-success" type="button" ng-click="addBackground()">Charger un arrière plan</button>-->
 								
 								<span class="btn btn-success fileinput-button">
 									<i class="icon-plus icon-white"></i>
-									<span>Charger une image de background</span>
+									<span>CUpload a background Image</span>
 									<input id="imageBackgroundUpload" type="file" ng-file-select="onFileSelect($files, $event)">
 								</span>
 								
@@ -217,16 +217,16 @@
 			<div class="col-lg-2 borderLeft" id="rightColumn">
 				
 				<div ng-if="iconId" class="form-horizontal" id="iconInfos">
-				<legend>Informations sur l'icône</legend>
+				<legend>Icon details</legend>
 					<div class="form-group">
-						<label class="col-lg-4 control-label" for="inputTitleIcon">Titre :</label>
+						<label class="col-lg-4 control-label" for="inputTitleIcon">Title :</label>
 						<div class="col-lg-8">
 							<input type="text" class="form-control" id="inputTitleIcon" placeholder="Titre" value="{{icons[iconId].title}}" ng-model='icons[iconId].title'>
 						</div>
 					</div>
 					
 					<div class="form-group">
-						<label class="col-lg-4 control-label" for="inputSizeIcon">Taille (LxH) :</label>
+						<label class="col-lg-4 control-label" for="inputSizeIcon">Size (WxH) :</label>
 						<div class="col-lg-8">
 							<div class="row">
 							
@@ -243,7 +243,7 @@
 					</div>
 					
 					<div class="form-group">
-						<label class="col-lg-4 control-label" for="iconLink">Lien :</label>
+						<label class="col-lg-4 control-label" for="iconLink">Link :</label>
 						<div class="col-lg-8">
 							<a href='{{ icons[iconId].link }}' ng-model='icons[iconId]'><p class="form-control-static" ng-model='icons[iconId]' id="iconLink">{{ icons[iconId].linkFileName }}</p></a>			
 						</div>
@@ -251,14 +251,14 @@
 					
 					<br/>
 					
-					<button ng-if="icons[iconId].linkFileName" type="button" class="blockCenter btn btn-danger btn-sm" id="deleteIconLink"  ng-click="removeIconFile()">Supprimer le lien</button>
+					<button ng-if="icons[iconId].linkFileName" type="button" class="blockCenter btn btn-danger btn-sm" id="deleteIconLink"  ng-click="removeIconFile()">Delete the link</button>
 					
 					<div ng-if="!icons[iconId].linkFileName" class="blockCenter" id="inputIconLink">
 						<!--<button class="btn btn-success" type="button" ng-click="addIconFile()">Ajouter un fichier</button>-->
 						
 						<span class="btn btn-success fileinput-button">
 							<i class="icon-plus icon-white"></i>
-							<span>Charger un fichier lié</span>
+							<span>Upload a linked file</span>
 							<!-- The file input field used as target for the file upload widget -->
 							<input id="iconLinkUpload" type="file" ng-file-select="onFileSelect($files, $event)">
 						</span>
@@ -278,7 +278,7 @@
 					
 				<!-- trash -->
 				<div>
-					<legend>Corbeille</legend>
+					<legend>Trash</legend>
 					<div id="trash" class="blockCenter" trash>
 						<img src="img/trash.png" width="70%">
 					</div>
