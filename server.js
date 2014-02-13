@@ -19,6 +19,9 @@ app.configure(function () {
 	app.use(express.errorHandler({dumpExceptions: true, showStack: true, showMessage: true}));
 });
 
+app.get('/panoply', function(req,res){
+ res.sendfile(__dirname + '/app/index.html');
+}); 
 app.post('/upload', presentationProvider.upload);
 app.post('/createPresentation', presentationProvider.createPresentation);
 app.get('/app/uploads/:id/:file', presentationProvider.getImage);
@@ -34,6 +37,6 @@ app.listen(port, '127.0.0.1', 511, function() {
   console.log("Listening on : "+port);
   
   var open = require('open');
-  open('http://localhost:' + port + '/');
+  open('http://localhost:' + port + '/panoply');
   //open('http://127.0.0.1:8080/debug?port=5858');
 });
