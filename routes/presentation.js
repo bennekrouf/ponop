@@ -169,24 +169,29 @@ exports.reinitialization = function (req, res) {
 	
 	var presentationId = req.body.presentationId;	
 	
-	console.log(req.body);
 	var path_files = require('path').normalize(__dirname + '/../app/uploads/'+ presentationId);
 	
-	if( fs.existsSync(path_files) ) 
-	{
-		files = fs.readdirSync(path_files);
+	deleteFolderRecursive(path_files);
+	
+	exports.createPresentation(req,res);
+}
+
+
+deleteFolderRecursive = function(path) 
+{
+    var files = [];
+    if( fs.existsSync(path) ) {
+        files = fs.readdirSync(path);
         files.forEach(function(file,index){
-            var curPath = path_files + "/" + file;
+            var curPath = path + "/" + file;
             if(fs.statSync(curPath).isDirectory()) { // recurse
                 deleteFolderRecursive(curPath);
             } else { // delete file
                 fs.unlinkSync(curPath);
             }
         });
-		
-		res.send(200, 'Folder was reinit');
-	}
-	else
-		res.send(500, 'Folder not found');
-}
+        
+        fs.rmdirSync(path);
+    }
+};
 

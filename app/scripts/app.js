@@ -48,7 +48,18 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 			$scope.iconId = undefined;
 			$scope.iconIdUploaded = $scope.panels[$scope.selectedPanelIndex].iconIdUploaded
 			
-			$http({url: 'reinitialization', method: "POST", data: {'presentationId': $cookies.presentationId}, headers: {'Content-Type': 'application/json'}});
+			$http({
+				url: 'reinitialization', 
+				method: "POST", 
+				data: {'presentationId': $cookies.presentationId},
+				headers: {'Content-Type': 'application/json'}
+			})
+			.then(function(response) {
+				console.log('ok');
+        		$cookies.presentationId = response.data;
+			}, function(error) {
+				console.log('nok');
+			});
 			
 			if(!$scope.$$phase && !$scope.$root.$$phase)
 	    		$scope.$apply();   

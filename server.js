@@ -37,6 +37,6 @@ app.listen(port, '127.0.0.1', 511, function() {
   console.log("Listening on : "+port);
   
   var open = require('open');
-  open('http://localhost:' + port + '/panoply');
+  open('http://localhost:' + port + '/panoply/');
   //open('http://127.0.0.1:8080/debug?port=5858');
 });
