@@ -135,10 +135,11 @@ panoply.factory('BackgroundFactory', function() {
 			background.fileName = src.substr(src.lastIndexOf('/') + 1);
 			background.src = src;
 
-			videoBackGround = imgSrc.substr(imgSrc.lastIndexOf('/') + 1)
+			if (imgSrc != undefined && imgSrc != '') {
+				videoBackGround = imgSrc.substr(imgSrc.lastIndexOf('/') + 1)
+			}
 
 			if (background.type == 'kVideo' && videoBackGround != '' && videoBackGround != 'undefined') {
-				console.log('plop');
 				background.videoBackgroundSrc = imgSrc;
 				background.videoBackground = imgSrc.substr(imgSrc.lastIndexOf('/') + 1);
 			}
