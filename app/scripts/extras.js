@@ -2,7 +2,7 @@ $(window).bind("resize", browserWidthChange);
 
 var panoplyTypes = 	{ 	
 						'kImage': ['jpg', 'jpeg', 'png', 'bmp'],
-						'kVideo': ['mp4'],
+						'kVideo': ['mp4','quicktime'],
 						'kPDF':	['pdf'],
 						'kLoad': ['zip', 'x-zip-compressed']	
 					};

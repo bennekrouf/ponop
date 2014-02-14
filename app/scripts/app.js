@@ -98,8 +98,8 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
     	var fileExtension = file.type.substr(file.type.lastIndexOf('/') + 1);		
 		var fileType = ifFileIsAccepted(fileExtension, acceptedType);
 		
-		console.log(fileExtension);
-		console.log(fileType);
+		console.log('extension : '+fileExtension);
+		console.log('file type : '+fileType);
 		
 		if (!fileType)
 			alert("Ce format de fichier n'est pas autorisé");
