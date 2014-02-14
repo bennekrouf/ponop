@@ -49,32 +49,35 @@ panoply.factory('PanelsFactory', ['$cookies', 'IconsFactory', 'BackgroundFactory
 		        var background = BackgroundFactory.generateBackground(target_path + iOSBackground.fileName, iOSBackground.type, target_path + iOSBackground.videoBackground);
 		        
 		        var iOSIcons = iOSPanels[i].icons;
+
 		        var icons = {};
-		        for (var j=0; j<iOSIcons.length; j++)
-		        {
-			        var iOSIcon = iOSIcons[j];
-			        var icon = IconsFactory.generateIcon(target_path + iOSIcon.imageUp)
-					
-			        icon.dropped = true;
-			        icon.title = iOSIcon.title;
-			        icon.type = iOSIcon.type;
-			        icon.link = target_path + iOSIcon.link;
-			        icon.linkFileName = iOSIcon.link;
-			        
-			        if (iOSIcon.imageUp === 'button_clear.png')
-			        	icon.isClear = true;
-			        
-			        icon.nWidth = imgDimensions[iOSIcon.imageUp].width;
-			        icon.nHeight = imgDimensions[iOSIcon.imageUp].height;
-			        
-			        icon.width = iOSIcon.scaleX * icon.nWidth / 2;
-			        icon.height = iOSIcon.scaleY * icon.nHeight / 2;
-			        
-			        icon.left = iOSIcon.posX/2 - icon.width/2;
-			        icon.top = (1536-iOSIcon.posY)/2 - icon.height/2;
-			        
- 			        icons[icon.id] = icon;
-		        }
+		        if (iOSIcons != undefined) {
+			        for (var j=0; j<iOSIcons.length; j++)
+			        {
+				        var iOSIcon = iOSIcons[j];
+				        var icon = IconsFactory.generateIcon(target_path + iOSIcon.imageUp)
+						
+				        icon.dropped = true;
+				        icon.title = iOSIcon.title;
+				        icon.type = iOSIcon.type;
+				        icon.link = target_path + iOSIcon.link;
+				        icon.linkFileName = iOSIcon.link;
+				        
+				        if (iOSIcon.imageUp === 'button_clear.png')
+				        	icon.isClear = true;
+				        console.log('icon link : '+icon.link);
+				        icon.nWidth = imgDimensions[iOSIcon.imageUp].width;
+				        icon.nHeight = imgDimensions[iOSIcon.imageUp].height;
+				        
+				        icon.width = iOSIcon.scaleX * icon.nWidth / 2;
+				        icon.height = iOSIcon.scaleY * icon.nHeight / 2;
+				        
+				        icon.left = iOSIcon.posX/2 - icon.width/2;
+				        icon.top = (1536-iOSIcon.posY)/2 - icon.height/2;
+				        
+	 			        icons[icon.id] = icon;
+			        }
+		    	}
 		        
 		        panel.icons = icons;
 		        panel.background = background;
