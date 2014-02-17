@@ -75,11 +75,18 @@
 				<button class="btn btn-success" type="button" ng-click="addPanel()">Add a Pannel</button>
 				<button id="deletePanoButton" class="btn btn-danger" type="button" ng-click="removePanel()" ng-disabled="panels.length <= 3">Remove a Pannel</button>
 				
+
 				<span style="float: right;" class="btn btn-primary fileinput-button">
 					<i class="icon-plus icon-white"></i>
 					<span>Upload a presentation</span>
 					<input id="presentationUpload" type="file" ng-file-select="onFileSelect($files, $event)">
 				</span>
+				<span class="progress" style='width:200px; float:right; margin: 7px 10px 0 0;'>
+					<span class="progress-bar" role="progressbar" ng-model='progressBarPresentation' aria-valuenow="{{ progressBarPresentation }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ progressBarPresentation }}%;">
+						<span class="sr-only">{{ progressBarPresentation }}% Complete</span>
+					</span>
+				</span>
+				<div class="clear"></div>
 			</div>
 			
 			<div id='listLayer'>

@@ -136,6 +136,10 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 					$scope.progressBarImageBackground = parseInt(100.0 * evt.loaded / evt.total);
 				else if (typeOfUpload === 'file')
 					$scope.progressBarFile = parseInt(100.0 * evt.loaded / evt.total);
+				else if (typeOfUpload === 'zip'){
+					console.log('progress : '+parseInt(100.0 * evt.loaded / evt.total))
+					$scope.progressBarPresentation= parseInt(100.0 * evt.loaded / evt.total);
+				}
 			})
 			.success(function(data, status, headers, config) {
 				if (typeOfUpload === 'icon')
@@ -174,6 +178,8 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 					$scope.progressBarImageBackground = parseInt(0);
 				else if (typeOfUpload === 'file')
 					$scope.progressBarFile = parseInt(0);
+				else if (typeOfUpload === 'zip')
+					$scope.progressBarPresentation = parseInt(0);
 			})
 	}
     
@@ -236,7 +242,7 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 	    var icon = IconsFactory.generateIcon(src);
 	    if (src === 'img/button_clear.png')
 	    	icon.isClear = true;
-	    
+
 	    $scope.icons[icon.id] = icon;
 	    $scope.iconIdUploaded = icon.id;
 	    $scope.iconId = undefined;

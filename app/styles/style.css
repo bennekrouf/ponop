@@ -18,6 +18,11 @@
 	height:100%;
 }
 
+.progressPresentation{
+	display: inline;
+	height: 10px;
+}
+
 
 #iconPlace {
 	width: 200px;
@@ -66,6 +71,10 @@
 
 .clearIcon {
 	border: 1px solid black;
+}
+
+.clear{
+	clear: both;
 }
 
 .panel {
