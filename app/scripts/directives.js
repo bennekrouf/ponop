@@ -4,14 +4,9 @@ panoply.directive('resizable', [function() {
 		restrict: 'A',
 		replace: false,
 		link: function(scope, element, attrs)  {
-			var aspectRatioBool = true;
-			if (scope.icons[attrs.id].isClear) {
-				aspectRatioBool = false;
-			}
 
 			element.resizable({
 				containment: "#workspace",
-				aspectRatio: aspectRatioBool,
 				start : function(event,ui) {
 					scope.iconSelected(ui.helper.attr('id'), event);
 				},
