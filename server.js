@@ -33,7 +33,7 @@ app.post('/panoply/reinitialization', presentationProvider.reinitialization)
 
 var port = process.argv[2] || 5000;	
 	
-app.listen(port, '127.0.0.1', 511, function() {
+app.listen(port, '0.0.0.0', 511, function() {
   console.log("Listening on : "+port);
   
   var open = require('open');
