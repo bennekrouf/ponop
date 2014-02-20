@@ -24,6 +24,7 @@
     <script src="vendor/angular-route/angular-route.min.js"></script>
     <script src="vendor/ng-file-upload/angular-file-upload.min.js"></script> <!-- A METTRE AVANT COOKIE -->
     <script src="vendor/angular-cookies/angular-cookies.min.js"></script>
+    <script src="vendor/angular-local-storage/angular-local-storage.min.js"></script>
 
 
     <script type="text/javascript" src="vendor/html2canvas/build/html2canvas.min.js"></script>
@@ -90,7 +91,7 @@
 			</div>
 			
 			<div id='listLayer'>
-				<div class='panel' ng-repeat='panel in panels' ng-click="panelSelected($index, $event)" ng-class="{ 'panelSelected': $index == selectedPanelIndex}" ng-style="getPannelBackground($index)"></div>
+				<div class='panel' ng-repeat='panel in panels' ng-click="panelSelected($index, $event)" ng-class="{ 'panelSelected': $index == selectedPanelIndex}" ng-style="getPanelBackground($index)"></div>
 			</div>
 		</div> 
 	</section><!-- end list panneaux -->
@@ -139,7 +140,7 @@
 							<div class="form-group">
 								<label class="col-lg-4 control-label" for="linkBackground">Link :</label>
 								<div class="col-lg-8">
-									<a href='{{ panels[selectedPanelIndex].background.src }}' ng-model='panels[selectedPanelIndex].background'><p class="form-control-static" id="linkBackground">{{ panels[selectedPanelIndex].background.fileName }}</p></a>
+									<a href='{{ panels[selectedPanelIndex].background.src }}' target="_blank" ng-model='panels[selectedPanelIndex].background'><p class="form-control-static" id="linkBackground">{{ panels[selectedPanelIndex].background.fileName }}</p></a>
 								</div>
 							</div>
 							
@@ -172,7 +173,7 @@
 							<div class="form-group">
 								<label class="col-lg-4 control-label" for="linkImgBackground">Link :</label>
 								<div class="col-lg-8">
-									<a href='{{ panels[selectedPanelIndex].background.videoBackgroundSrc }}' ng-model='panels[selectedPanelIndex].background'><p class="form-control-static" id="linkImgBackground">{{ panels[selectedPanelIndex].background.videoBackground }}</p></a>
+									<a href='{{ panels[selectedPanelIndex].background.videoBackgroundSrc }}' target="_blank" ng-model='panels[selectedPanelIndex].background'><p class="form-control-static" id="linkImgBackground">{{ panels[selectedPanelIndex].background.videoBackground }}</p></a>
 								</div>
 							</div>
 							
@@ -206,18 +207,17 @@
 			</div> <!-- end icon -->
 			
 			<div class="col-lg-8" id="centerColumn"> <!-- workspace -->
-					<div id="workspace" class='minHeight' ng-style="getPannelBackground(selectedPanelIndex)" droppable>
+					<div id="workspace" class='minHeight' ng-style="getPanelBackground(selectedPanelIndex)" droppable>
 
-					<video id="videoBackground" autoplay loop ng-if="panels[selectedPanelIndex].background.type == 'kVideo'">
-						<!-- MP4 for Safari, IE9, iPhone, iPad, Android, and Windows Phone 7 -->
-						<source type="video/mp4" src="{{panels[selectedPanelIndex].background.src}}" />
-
-					</video>
+						<video id="videoBackground" autoplay loop ng-if="panels[selectedPanelIndex].background.type == 'kVideo'"> <!-- MP4 for Safari, IE9, iPhone, iPad, Android, and Windows Phone 7 -->
+							<source type="video/mp4" src="{{panels[selectedPanelIndex].background.src}}" />
+							Votre navigateur ne peut lire la vidéo.
+						</video>
 						
 						<div ng-repeat="icon in icons"  id='{{icon.id}}' ng-click="iconSelected(icon.id, $event)"  ng-style='{width:icon.width, height:icon.height, top:icon.top, left:icon.left }' class='icon draggable-object' ng-class="{'clearIcon': icon.isClear}" ng-if='icon.dropped'  class="ui-widget-content" draggable resizable>
-
-						<img  ng-src='{{icon.src}}' ng-style='{width:icon.width, height:icon.height}' />
+							<img  ng-src='{{icon.src}}' ng-style='{width:icon.width, height:icon.height}' />
 						</div>
+						
 					</div>
 			</div> <!-- end workspace -->
 			
@@ -252,7 +252,7 @@
 					<div class="form-group">
 						<label class="col-lg-4 control-label" for="iconLink">Link :</label>
 						<div class="col-lg-8">
-							<a href='{{ icons[iconId].link }}' ng-model='icons[iconId]'><p class="form-control-static" ng-model='icons[iconId]' id="iconLink">{{ icons[iconId].linkFileName }}</p></a>			
+							<a href='{{ icons[iconId].link }}' target="_blank" ng-model='icons[iconId]'><p class="form-control-static" ng-model='icons[iconId]' id="iconLink">{{ icons[iconId].linkFileName }}</p></a>			
 						</div>
 					</div>
 					

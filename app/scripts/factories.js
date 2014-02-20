@@ -1,16 +1,22 @@
-panoply.factory('PanelsFactory', ['$cookies', 'IconsFactory', 'BackgroundFactory', function($cookies, IconsFactory, BackgroundFactory) {
+panoply.factory('PanelsFactory', ['$cookies', 'IconsFactory', 'BackgroundFactory', 'localStorageService', function($cookies, IconsFactory, BackgroundFactory, localStorageService) {
     
     //var panels = undefined;
     
     return {
     
         panelsInit: function() {
-            if ($cookies.panels != undefined)
-				var panels = $.parseJSON($cookies.panels).panels	
+            if (localStorageService.isSupported && localStorageService.get('panels') != undefined) 
+            {
+	            var panels = angular.fromJson(localStorageService.get('panels')).panels;
+            }
+            else if ($cookies.panels != undefined)
+            {
+	            var panels = $.parseJSON($cookies.panels).panels;
+            }
 			else
 			{
 				var panels = [this.generatePanel(), this.generatePanel(), this.generatePanel()];
-				this.savedPanelsInCookie(panels);
+				this.savedPanelsInMemory(panels);
 			}
 			
 			return panels;
@@ -27,10 +33,30 @@ panoply.factory('PanelsFactory', ['$cookies', 'IconsFactory', 'BackgroundFactory
 			return panel;
         },
         
-        savedPanelsInCookie: function(panelsToSaved) {
-	        $cookies.panels = JSON.stringify({panels :panelsToSaved});
-        },
+        savedPanelsInMemory: function(panelsToSaved) {
+	        
+	        if (localStorageService.isSupported) 
+	        {
+		        //local storage saving
+				localStorageService.clearAll();
+				localStorageService.add('panels', angular.toJson({panels :panelsToSaved}));
+	        }
+	        else 
+	        {
+		        //cookies saving
+				$cookies.panels = angular.toJson({panels :panelsToSaved});
+	        }
+	        
+        },        
         
+        clearPanelsInMemory: function () {
+	      
+	      if (localStorageService.isSupported) 
+			localStorageService.clearAll();
+	      else
+			$cookies.panels = undefined;
+
+        },
         
         loadPanelsFromData: function (data) {
 	        	        

@@ -12,7 +12,7 @@ icons : liste des icones du panneaux
 */
 
 
-var panoply = angular.module('Panoply', ['angularFileUpload', 'ngCookies'])
+var panoply = angular.module('Panoply', ['angularFileUpload', 'ngCookies', 'LocalStorageModule'])
 
 panoply.run(['$rootScope', '$http', '$cookies',  function ($rootScope, $http, $cookies) {
   	
@@ -40,7 +40,7 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 	    var answer = confirm("Attention, toutes les modifications apportés à la présentation seront supprimées")
 	    if (answer)
 	    {
-		    $cookies.panels = undefined;
+		    PanelsFactory.clearPanelsInMemory()
 		    $scope.panels = PanelsFactory.panelsInit();
 		    
 		    $scope.selectedPanelIndex = 0;
@@ -158,6 +158,8 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 					$scope.icons = $scope.panels[$scope.selectedPanelIndex].icons;
 					$scope.iconId = undefined;
 					$scope.iconIdUploaded = $scope.panels[$scope.selectedPanelIndex].iconIdUploaded
+					
+					PanelsFactory.savedPanelsInMemory($scope.panels);
 	    	    	  
 					if(!$scope.$$phase && !$scope.$root.$$phase)
 						$scope.$apply();
@@ -225,14 +227,7 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 	    $scope.panels[$scope.selectedPanelIndex].icons = $scope.icons;
     	$scope.panels[$scope.selectedPanelIndex].iconIdUploaded = $scope.iconIdUploaded;
     	
-    	PanelsFactory.savedPanelsInCookie($scope.panels);
-
-  //   	html2canvas($('#workspace'), {
-		//   	onrendered: function(canvas) {
-		//     	//$(".panelSelected").css('background-image','url('+canvas.toDataURL("image/png")+')');
-		//     	//document.body.appendChild(canvas);
-		//   	}
-		// });
+    	PanelsFactory.savedPanelsInMemory($scope.panels);
     }
     
     /* ICON */
@@ -335,24 +330,32 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 	    $scope.saveActualPanel();
     }
     
-    $scope.getPannelBackground = function($index) {
+    $scope.getPanelBackground = function($index) {
     	var style = {};
-    	
+    	    	
     	//dans le cas ou un imageBackgroundSrc est définit, on l'affiche
-    	if ($scope.panels[$index].background != undefined) {
-			if ($scope.panels[$index].background.videoBackgroundSrc != undefined) {
+    	if ($scope.panels[$index].background != undefined) 
+    	{    		
+			if ($scope.panels[$index].background.videoBackgroundSrc && $scope.panels[$index].background.videoBackgroundSrc.length != 0) 
+			{
+				console.log('vidéo passe');
+				
 				style = {
 					'backgroundImage': 'url(\''+$scope.panels[$index].background.videoBackgroundSrc+'\')',
 					'filter':'progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true,src='+$scope.panels[$index].background.videoBackgroundSrc+',sizingMethod="scale")',
 				};
 			}
-			else{
+			else
+			{
+				console.log('vidéo no passe');
+				
 				style = {
 					'backgroundImage': 'url(\''+$scope.panels[$index].background.src+'\')',
 					'filter':'progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true,src='+$scope.panels[$index].background.src+',sizingMethod="scale")',
 				};
 			}
 		}
+		
 		return style;
 	}
 
@@ -381,7 +384,7 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 		$http({
 				url: 'json', 
 				method: "POST", 
-				data: {json: JSON.stringify(JSONFile), presentationId: $cookies.presentationId},
+				data: {json: angular.toJson(JSONFile), presentationId: $cookies.presentationId},
 				headers: {'Content-Type': 'application/json'}
 			})
 		.success(function (data, status, headers, config) {
