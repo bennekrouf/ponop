@@ -60,7 +60,7 @@ function ifFileIsAccepted(fileExtension, acceptedKeysType)
 }
 
 
-function generateJSON(userPanels) {
+function generateJSON(userPanels, presentationTitle) {
 	
 	var panels = new Array();
 		
@@ -131,6 +131,7 @@ function generateJSON(userPanels) {
 	var JSONFile = {
 		"appSettings":
 		{
+				"presentationTitle":         presentationTitle,
 				"cubeOffsetY":				 0,
 				"defaultShift":				 0,
 				"skewAngle":				 10,

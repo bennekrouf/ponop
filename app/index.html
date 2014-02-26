@@ -43,6 +43,23 @@
     <link href="styles/cgi-style.css" rel="stylesheet">
 
     <title>Panoply</title>
+
+    <!-- Piwik -->
+	<script type="text/javascript">
+	  var _paq = _paq || [];
+	  _paq.push(["setCookieDomain", "*.fr-cem.services.logica.com"]);
+	  _paq.push(["trackPageView"]);
+	  _paq.push(["enableLinkTracking"]);
+
+	  (function() {
+	    var u=/*(("https:" == document.location.protocol) ? "https" : "http") + */"https://fr-cempush.services.logica.com/piwik/";
+	    _paq.push(["setTrackerUrl", u+"piwik.php"]);
+	    _paq.push(["setSiteId", "5"]);
+	    var d=document, g=d.createElement("script"), s=d.getElementsByTagName("script")[0]; g.type="text/javascript";
+	    g.defer=true; g.async=true; g.src=u+"piwik.js"; s.parentNode.insertBefore(g,s);
+	  })();
+	</script>
+	<!-- End Piwik Code -->
 </head>
 
 <body ng-controller="PanoplyCtrl">
@@ -64,6 +81,7 @@
 			<ul class="nav navbar-nav">
 				<li><a id="saveCreation" ng-click="generateZip($event)" href="">Save</a></li>
 				<li><a id="reinitCreation" ng-click="reinitialize()" href="">Reset</a></li>
+				<li><input type="text"class="form-control" id="presentationTitle" placeholder="Presentation Tilte" value="{{presentationTitle}}" ng-model="presentationTitle"  /></li>
 		    </ul>
 		</div>
 	</nav>

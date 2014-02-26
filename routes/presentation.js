@@ -6,6 +6,18 @@ var fs = require('fs')
 var AdmZip = require('adm-zip');
 var sizeOf = require('image-size');
 
+var PiwikClient = require('piwik-client');
+var myClient = new PiwikClient('https://fr-cempush.services.logica.com/piwik/', 'fd70a5c799bb1d21573ab8a1edf8b22a')
+
+// myClient.api({
+//       method:   'Actions.getPageUrls',
+//       idSite:   1,
+//       period:   'day',
+//       date:     'today'
+// }, (err, responseObject) {
+//     //Code etc etc
+// });
+
 exports.upload = function(req, res) {	
 	
 	var presentationId = req.body.presentationId;	
@@ -130,16 +142,35 @@ exports.zip = function (req, res) {
 	cookies = parseCookies(req);
 
 	var presentationId = cookies["presentationId"];
+    var presentationTitle =  cookies["presentationTitle"];
 
 	var path_files = require('path').normalize(__dirname + '/../app/uploads/'+ presentationId);
 	
-	if(fs.existsSync(path_files + '/archive.zip'))
-		 fs.unlinkSync(path_files + '/archive.zip');
+    var fileName = "archive";
+    if(presentationTitle != undefined && presentationTitle != ""){
+        fileName = presentationTitle;
+    }
+
+	if(fs.existsSync(path_files + '/'+fileName+'.zip'))
+		 fs.unlinkSync(path_files + '/'+fileName+'.zip');
+
+    //on boucle sur les fichier du dossier si on trouve un zip, on le delete
+    files = fs.readdirSync(path_files);
+        files.forEach(function(file,index){
+            var curPath = path_files + "/" + file;
+
+            var extentionFile = file.split('.').pop();
+    
+            if (extentionFile === 'zip')
+            {
+                fs.unlinkSync(curPath);
+            }
+    });
 	
 	var zip = new AdmZip();	
 	zip.addLocalFolder(path_files);	
-	zip.writeZip(path_files + '/archive.zip');
-	res.download(path_files + '/archive.zip');
+	zip.writeZip(path_files + '/'+fileName+'.zip');
+	res.download(path_files + '/'+fileName+'.zip');
 };
 
 function parseCookies (request) {

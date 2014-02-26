@@ -25,6 +25,7 @@ panoply.run(['$rootScope', '$http', '$cookies',  function ($rootScope, $http, $c
         		$cookies.presentationId = response.data;
 			}, function(error) {});
   	}
+
 }]);
 
 
@@ -43,6 +44,7 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 		    PanelsFactory.clearPanelsInMemory()
 		    $scope.panels = PanelsFactory.panelsInit();
 		    
+		    $scope.presentationTitle = undefined;
 		    $scope.selectedPanelIndex = 0;
 			$scope.icons = $scope.panels[$scope.selectedPanelIndex].icons;
 			$scope.iconId = undefined;
@@ -376,22 +378,32 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
     
     /*JSON */
     $scope.generateZip = function (event)
-    {	    
-	    $scope.saveActualPanel();
-	    
-	    var JSONFile = generateJSON($scope.panels);
-				
-		$http({
-				url: 'json', 
-				method: "POST", 
-				data: {json: angular.toJson(JSONFile), presentationId: $cookies.presentationId},
-				headers: {'Content-Type': 'application/json'}
-			})
-		.success(function (data, status, headers, config) {
-			location.href = './zip';	
-        })
-        .error(function (data, status, headers, config) {
-        	console.log(data);
-        });	
+    {	 
+	    if ($scope.presentationTitle == undefined || $scope.presentationTitle == "") {
+	    	alert("You need to name your presentation before downloading it !");
+	    }
+	    else{
+	    	//Piwik  
+	    	_paq.push(['setCustomVariable','1','Save','save', 'visit']);
+	    	_paq.push(['trackPageView']);
+
+		    $scope.saveActualPanel();
+		    //alert($scope.presentationTitle);
+		    $cookies.presentationTitle = $scope.presentationTitle;
+		    var JSONFile = generateJSON($scope.panels, $scope.presentationTitle);
+					
+			$http({
+					url: 'json', 
+					method: "POST", 
+					data: {json: angular.toJson(JSONFile), presentationId: $cookies.presentationId, presentationTitle : $scope.presentationTitle},
+					headers: {'Content-Type': 'application/json'}
+				})
+			.success(function (data, status, headers, config) {
+				location.href = './zip';	
+	        })
+	        .error(function (data, status, headers, config) {
+	        	console.log(data);
+	        });	
+	    }
     }
 }]);
