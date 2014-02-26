@@ -6,9 +6,6 @@ var fs = require('fs')
 var AdmZip = require('adm-zip');
 var sizeOf = require('image-size');
 
-var PiwikClient = require('piwik-client');
-var myClient = new PiwikClient('https://fr-cempush.services.logica.com/piwik/', 'fd70a5c799bb1d21573ab8a1edf8b22a')
-
 // myClient.api({
 //       method:   'Actions.getPageUrls',
 //       idSite:   1,
