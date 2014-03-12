@@ -185,12 +185,16 @@ panoply.directive('trash', ['$http', '$cookies', function($http, $cookies) {
 			        else
 			        	id = scope.iconId
 			        
-			        $http({
-				        url: 'remove', 
-						method: "POST",
-						data: {fileName: scope.icons[id].fileName, presentationId: $cookies.presentationId},
-						headers: {'Content-Type': 'application/json'}
-			        })
+			        
+			        if (scope.icons[id].fileName != 'button_clear.png') {
+				        $http({
+				        	url: 'remove', 
+							method: "POST",
+							data: {fileName: scope.icons[id].fileName, presentationId: $cookies.presentationId},
+							headers: {'Content-Type': 'application/json'}
+						})
+			        }
+			        
 			        
 			        if (scope.icons[id].linkFileName != undefined)
 			        {
