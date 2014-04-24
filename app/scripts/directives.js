@@ -4,9 +4,10 @@ panoply.directive('resizable', [function() {
 		restrict: 'A',
 		replace: false,
 		link: function(scope, element, attrs)  {
-
+			
 			element.resizable({
 				containment: "#workspace",
+				aspectRatio: false,
 				start : function(event,ui) {
 					scope.iconSelected(ui.helper.attr('id'), event);
 				},

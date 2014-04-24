@@ -251,6 +251,12 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
     }
 
     $scope.iconSelected = function (id, sender) {	    	    
+	    
+	    if ($scope.iconId != undefined) {
+		    $scope.checkHeight();
+			$scope.checkWidth();
+	    }
+	    
 	    $scope.iconId = id;
     }
     
@@ -285,6 +291,29 @@ panoply.controller('PanoplyCtrl', ["$scope", "$compile", "$upload", '$cookies', 
 	    
 	    if(!$scope.$$phase && !$scope.$root.$$phase)
 	    	$scope.$apply();   
+    }
+    
+    
+    $scope.checkWidth = function () {
+	    
+	    var width = $scope.icons[$scope.iconId].width
+	    
+	    
+	    if (width == '' || isNaN(width)) { //si l'utilisateur laisse une valeur vide dans l'input on remet la largeur de l'image affichée
+		    $scope.icons[$scope.iconId].width = angular.element($('#'+ $scope.iconId)).find('img')[0].width;
+		    //$scope.icons[$scope.iconId].width = angular.element(document.querySelector('#'+ $scope.iconId)).find('img')[0].width;
+	    }
+	    
+    }
+    
+    $scope.checkHeight = function () {
+	    
+	    var height = $scope.icons[$scope.iconId].height
+	    
+	    if (height == '' || isNaN(height)) { //si l'utilisateur laisse une valeur vide dans l'input on remet la largeur de l'image affichée
+		    $scope.icons[$scope.iconId].height = angular.element($('#'+ $scope.iconId)).find('img')[0].height;
+		    //$scope.icons[$scope.iconId].height = angular.element(document.querySelector('#'+ $scope.iconId)).find('img')[0].height;
+	    }
     }
     
     

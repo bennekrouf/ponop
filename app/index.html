@@ -256,11 +256,11 @@
 							<div class="row">
 							
 								<div class="col-lg-6" id="iconWidthDiv">
-							    	<input type="text" id="iconWidth" class="form-control" placeholder="Largeur" value="{{icons[iconId].width}}" ng-model='icons[iconId].width'>
+							    	<input type="text" id="iconWidth" class="form-control" placeholder="Largeur" value="{{icons[iconId].width}}" ng-model='icons[iconId].width' ng-blur="checkWidth()">
 							    </div>
 							    
 							    <div class="col-lg-6" id="iconHeightDiv">
-							   		<input type="text" id="iconHeight" class="form-control" placeholder="Hauteur" value="{{icons[iconId].height}}" ng-model='icons[iconId].height'>
+							   		<input type="text" id="iconHeight" class="form-control" placeholder="Hauteur" value="{{icons[iconId].height}}" ng-model='icons[iconId].height' ng-blur="checkHeight()">
 							   	</div>
 							   	
 							</div>
